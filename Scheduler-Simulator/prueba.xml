@@ -1,0 +1,24 @@
+
+<Processes>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>100</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>20</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>200</TotalTime>
+	<InitTime>30</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>10</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>NORMAL</SchedulerPolitic>
+	<TotalTime>100</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+</Processes>

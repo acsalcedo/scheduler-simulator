@@ -14,9 +14,12 @@ public class Process {
     private int IOTime;
     private String processType; // TODO enum
 
+    public Process() {}
+    
     public Process(String schedulerPolitic, String processType) {
         this.schedulerPolitic = schedulerPolitic;
         this.processType = processType;
+        // TODO set PID
     }
     
      public int getPID() {
@@ -118,6 +121,14 @@ public class Process {
         return processType;
     }
 
+    public void print() {
+        
+        System.out.println("Scheduler politic: " + schedulerPolitic +
+                           "\nTotal Time: " + totalTime +
+                           "\nInit Time: " + initTime +
+                           "\nNeeds IO? " + needsIO +
+                           "\nInit IO Time: " + IOTime);
+    }
     
     
     
