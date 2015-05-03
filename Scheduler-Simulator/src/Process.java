@@ -5,8 +5,6 @@ public class Process {
     private int dynamicPriority;
     private String schedulerPolitic; // TODO enum
     private int initTime;
-    private Process anterior;
-    private Process proximo;
     private int totalTime;
     private int runnningTime;
     private int timeInQueue;
@@ -123,14 +121,6 @@ public class Process {
 
     public String getProcessType() {
         return processType;
-    }
-
-    public void setAnterior(Process anterior) {
-        this.anterior = anterior;
-    }
-
-    public void setProximo(Process proximo) {
-        this.proximo = proximo;
     }
 
     public void print() {

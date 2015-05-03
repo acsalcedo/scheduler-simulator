@@ -15,6 +15,7 @@ public class Dispatcher {
 
         System.out.println(xml.processList.size());
 
+        // Inicializacion de valores iniciales de
         while (listIterator.hasNext()) {
             Process elem;
             elem=listIterator.next();
@@ -25,7 +26,11 @@ public class Dispatcher {
         }
 
         cpu1.imprimirProcesosActivos();
-
+        /*
+            Por aqui deberia ir la simulacion del CPU. Pienso que deberiamos usar hilo
+            para ejecutar el planificador cada 1milisegundo para similar el timer
+            y usar scheduler_tick().
+        */
     }
 
 }

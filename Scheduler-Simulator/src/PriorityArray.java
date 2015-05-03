@@ -8,6 +8,7 @@ public class PriorityArray {
     private int numActiveProcesses = 0;
     private int[] bitmap = new int[139];
     // private LinkedList<Process> queue[] = new [139];
+    // No se puede combinar arreglos y listas. Por eso uso Tabla hash con Integer
     private ConcurrentHashMap<Integer,LinkedList<Process>> queue
                     = new ConcurrentHashMap<Integer,LinkedList<Process>>(139);
 
@@ -31,7 +32,9 @@ public class PriorityArray {
         return bitmap[priority] == 0;
     }
 
-    /*public Process getProcess() {
+    /*  Acomodar este metodo
+
+    public Process getProcess() {
 
         int i = 0;
         while (i < bitmap.length && bitmap[i] == 0)
@@ -63,13 +66,18 @@ public class PriorityArray {
     }
 
 
-    /*public Process removeProcess(int priority) {
+    /* Acomodar este metodo
+
+    public Process removeProcess(int priority) {
         if (bitmap[priority] == 1) {
             removePriorityBitmap(priority);
         }
         return queue[priority].pollFirst();
     }*/
 
+    /*
+        Funcion nueva creada para verificar las listas prioridad
+    */
     public void imprimirTabla(){
         Iterator<LinkedList<Process>> listIterator;
         Iterator<Process> listIteratorProceso;
