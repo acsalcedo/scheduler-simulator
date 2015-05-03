@@ -1,16 +1,16 @@
-
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PriorityArray {
+
     private int numActiveProcesses = 0;
     private int[] bitmap = new int[139];
-    private ConcurrentHashMap<String,Process> queue;
-    
-    public PriorityArray() {
-        this.queue = new ConcurrentHashMap<String,Process>(139);
-        
-    }    
-    
+    // private LinkedList<Process> queue[] = new [139];
+    private ConcurrentHashMap<Integer,LinkedList<Process>> queue
+                    = new ConcurrentHashMap<Integer,LinkedList<Process>>(139);
+
     public int getNumActiveProcesses() {
         return numActiveProcesses;
     }
@@ -22,43 +22,75 @@ public class PriorityArray {
     public void addPriorityBitmap(int priority) {
         bitmap[priority] = 1;
     }
-    
+
     public void removePriorityBitmap(int priority) {
         bitmap[priority] = 0;
     }
-    
+
     public boolean isPriorityEmpty(int priority) {
         return bitmap[priority] == 0;
     }
-    
-    public Process getProcess() {
-        
+
+    /*public Process getProcess() {
+
         int i = 0;
         while (i < bitmap.length && bitmap[i] == 0)
             i++;
-        
+
         if (i == bitmap.length)
             return null;
         else
             return queue.get(i); //TODO poner el string en vez de la prioridad
-    }
-    
+    }*/
+
     public void addProcess(Process process, int priority) {
-        
+            //System.out.println("holaaa");
+        LinkedList<Process> lista ;
+
         if (bitmap[priority] == 0)
             addPriorityBitmap(priority);
-        
-        // queue.put(priority, process); //TODO poner el string en vez de la prioridad
+
+
+        if (queue.get(priority) == null) {
+            lista = new LinkedList<Process>();
+            lista.addLast(process);
+            queue.put(priority, lista);
+        } else {
+            lista = queue.get(priority);
+            lista.addLast(process);
+        }
+        increaseNumActiveProcesses();
     }
-    
-    
-    public Process removeProcess(int priority) {
-        return queue.remove(priority);
-        // TODO - cambiar bitmap
+
+
+    /*public Process removeProcess(int priority) {
+        if (bitmap[priority] == 1) {
+            removePriorityBitmap(priority);
+        }
+        return queue[priority].pollFirst();
+    }*/
+
+    public void imprimirTabla(){
+        Iterator<LinkedList<Process>> listIterator;
+        Iterator<Process> listIteratorProceso;
+        List<Process> elem;
+        Process proceso;
+
+        for (int i = 0; i < 140; i++) {
+            elem = queue.get(i);
+            if (elem != null) {
+                System.out.printf("\nLista de prioridad %d", i);
+                listIteratorProceso = elem.iterator();
+                while (listIteratorProceso.hasNext()){
+                    proceso = listIteratorProceso.next();
+                    proceso.print();
+            }
+        }
+
+        }
     }
-    
-    
-    
-    
-    
+
+
+
+
 }

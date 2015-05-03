@@ -5,6 +5,8 @@ public class Process {
     private int dynamicPriority;
     private String schedulerPolitic; // TODO enum
     private int initTime;
+    private Process anterior;
+    private Process proximo;
     private int totalTime;
     private int runnningTime;
     private int timeInQueue;
@@ -15,13 +17,15 @@ public class Process {
     private String processType; // TODO enum
 
     public Process() {}
-    
+
     public Process(String schedulerPolitic, String processType) {
         this.schedulerPolitic = schedulerPolitic;
         this.processType = processType;
+        this.anterior = null;
+        this.proximo = null;
         // TODO set PID
     }
-    
+
      public int getPID() {
         return PID;
     }
@@ -29,7 +33,7 @@ public class Process {
     public void setStaticPriority(int staticPriority) {
         this.staticPriority = staticPriority;
     }
-    
+
     public int getStaticPriority() {
         return staticPriority;
     }
@@ -37,7 +41,7 @@ public class Process {
     public void setDynamicPriority(int dynamicPriority) {
         this.dynamicPriority = dynamicPriority;
     }
-    
+
     public int getDynamicPriority() {
         return dynamicPriority;
     }
@@ -45,7 +49,7 @@ public class Process {
     public void setSchedulerPolitic(String schedulerPolitic) {
         this.schedulerPolitic = schedulerPolitic;
     }
-    
+
     public String getSchedulerPolitic() {
         return schedulerPolitic;
     }
@@ -53,7 +57,7 @@ public class Process {
     public void setInitTime(int initTime) {
         this.initTime = initTime;
     }
-    
+
     public int getInitTime() {
         return initTime;
     }
@@ -61,7 +65,7 @@ public class Process {
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
-    
+
     public int getTotalTime() {
         return totalTime;
     }
@@ -84,7 +88,7 @@ public class Process {
     public void setTimeSlice(int timeSlice) {
         this.timeSlice = timeSlice;
     }
-    
+
     public int getTimeSlice() {
         return timeSlice;
     }
@@ -92,7 +96,7 @@ public class Process {
     public void setState(String state) {
         this.state = state;
     }
-    
+
     public String getState() {
         return state;
     }
@@ -100,7 +104,7 @@ public class Process {
     public void setNeedsIO(boolean needsIO) {
         this.needsIO = needsIO;
     }
-    
+
     public boolean isNeedsIO() {
         return needsIO;
     }
@@ -108,7 +112,7 @@ public class Process {
     public void setIOTime(int IOTime) {
         this.IOTime = IOTime;
     }
-    
+
     public int getIOTime() {
         return IOTime;
     }
@@ -121,16 +125,27 @@ public class Process {
         return processType;
     }
 
-    public void print() {
-        
-        System.out.println("Scheduler politic: " + schedulerPolitic +
-                           "\nTotal Time: " + totalTime +
-                           "\nInit Time: " + initTime +
-                           "\nNeeds IO? " + needsIO +
-                           "\nInit IO Time: " + IOTime);
+    public void setAnterior(Process anterior) {
+        this.anterior = anterior;
     }
-    
-    
-    
-    
+
+    public void setProximo(Process proximo) {
+        this.proximo = proximo;
+    }
+
+    public void print() {
+
+        System.out.println("\n   Scheduler politic: " + schedulerPolitic +
+                           "\n   Prioridad estatica: " + staticPriority +
+                           "\n   Prioridad dinamica: " + dynamicPriority +
+                           "\n   Timeslice: " + timeSlice +
+                           "\n   Total Time: " + totalTime +
+                           "\n   Init Time: " + initTime +
+                           "\n   Needs IO? " + needsIO +
+                           "\n   Init IO Time: " + IOTime);
+    }
+
+
+
+
 }

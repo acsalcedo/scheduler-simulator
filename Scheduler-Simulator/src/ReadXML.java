@@ -8,10 +8,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class ReadXML extends DefaultHandler {
-    
+
     public List processList = new ArrayList();
     private Process currentProcess = new Process();
-    
+
     public void getXML(String file) {
 
         try {
@@ -20,21 +20,21 @@ public class ReadXML extends DefaultHandler {
             SAXParser saxParser = saxParserFactory.newSAXParser();
 
             DefaultHandler defaultHandler = new DefaultHandler() {
-      
+
                 boolean processTag = false;
                 boolean politicTag = false;
                 boolean totalTimeTag = false;
                 boolean initTimeTag = false;
                 boolean needsIOTag = false;
                 boolean initIOTag = false;
-                
+
                 @Override
-                public void startElement(String uri, String localName, String qName, 
+                public void startElement(String uri, String localName, String qName,
                                  Attributes attributes) throws SAXException {
 
                     if (qName.equalsIgnoreCase("PROCESS")) {
                         processTag = true;
-                        currentProcess = new Process();                    
+                        currentProcess = new Process();
                     }
                     if (qName.equalsIgnoreCase("SCHEDULERPOLITIC"))
                         politicTag = true;
@@ -47,12 +47,12 @@ public class ReadXML extends DefaultHandler {
                     if (qName.equalsIgnoreCase("INITIOTIME"))
                         initIOTag = true;
                 }
-                
+
                 @Override
-                public void characters(char ch[], int start, int length) throws SAXException {  
-       
+                public void characters(char ch[], int start, int length) throws SAXException {
+
                     if (politicTag)
-                        currentProcess.setSchedulerPolitic(new String(ch,start,length));  
+                        currentProcess.setSchedulerPolitic(new String(ch,start,length));
                     if (totalTimeTag)
                         currentProcess.setTotalTime(Integer.parseInt(new String(ch,start,length)));
                     if (initTimeTag)
@@ -62,8 +62,8 @@ public class ReadXML extends DefaultHandler {
                     if (initIOTag)
                         currentProcess.setIOTime(Integer.parseInt(new String(ch,start,length)));
                 }
-                
-                
+
+
                 @Override
                 public void endElement(String uri, String localName, String qName) throws SAXException {
 
@@ -84,11 +84,11 @@ public class ReadXML extends DefaultHandler {
                 }
 
             };
-            
+
             saxParser.parse(file, defaultHandler);
-            
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }          
-    }    
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
