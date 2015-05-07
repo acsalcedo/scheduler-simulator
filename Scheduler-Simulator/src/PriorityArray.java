@@ -33,10 +33,17 @@ public class PriorityArray {
     }
 
     public Process getProcess(int priority) {
-        if (i == bitmap.length)
+        List<Process> temp;
+        if (priority == bitmap.length){
             return null;
-        else
-            return queue.get(i);
+        } else {
+            temp=queue.get(priority);
+            return temp.get(0);
+        }
+    }
+
+    public int tamanioMax() {
+        return bitmap.length;
     }
 
     public void addProcess(Process process, int priority) {
@@ -85,13 +92,9 @@ public class PriorityArray {
                 while (listIteratorProceso.hasNext()){
                     proceso = listIteratorProceso.next();
                     proceso.print();
+                }
             }
-        }
 
         }
     }
-
-
-
-
 }

@@ -27,15 +27,15 @@ public class Scheduler {
             PriorityArray activos = cpu.getActiveProcesses();
             Process nuevoProceso = null;
             int i = 0;
-            while (i < activos.length) && isPriorityEmpty(i))
+            while ((i < activos.tamanioMax()) && (activos.isPriorityEmpty(i)))
                 i++;
 
-            nuevoProceso = getProcess(i);
+            nuevoProceso = activos.getProcess(i);
             cpu.setCurretProcess(nuevoProceso);
             inicializar = false;
             return true;
         }
-
+        return false;
         //Caso de reemplazo de proceso.
     }
 }

@@ -29,7 +29,7 @@ public class Dispatcher {
 
         cpu1.imprimirProcesosActivos();
 
-        planificador.planificar();
+        planificador.planificar(cpu1);
 
 
         while (ejecutar){

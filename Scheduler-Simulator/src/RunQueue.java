@@ -16,7 +16,6 @@ public class RunQueue {
         idleProcess = new Process("idle","idle");
     }
 
-a
     public void exchangeActiveExpiredProcesses() {
         PriorityArray exchange = activeProcesses;
         activeProcesses = expiredProcesses;
