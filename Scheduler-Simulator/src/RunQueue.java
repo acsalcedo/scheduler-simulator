@@ -16,11 +16,15 @@ public class RunQueue {
         idleProcess = new Process("idle","idle");
     }
 
-
+a
     public void exchangeActiveExpiredProcesses() {
         PriorityArray exchange = activeProcesses;
         activeProcesses = expiredProcesses;
         expiredProcesses = exchange;
+    }
+
+    public PriorityArray getActiveProcesses(){
+        return activeProcesses;
     }
 
 
@@ -34,6 +38,10 @@ public class RunQueue {
 
     public Process getCurrentProcess() {
         return currentProcess;
+    }
+
+    public void setCurretProcess(Process process){
+        currentProcess = process;
     }
 
     public void imprimirProcesosActivos() {

@@ -5,6 +5,8 @@ public class Process {
     private int dynamicPriority;
     private String schedulerPolitic; // TODO enum
     private int initTime;
+    private Process proximo;
+    private Process anterior;
     private int totalTime;
     private int runnningTime;
     private int timeInQueue;

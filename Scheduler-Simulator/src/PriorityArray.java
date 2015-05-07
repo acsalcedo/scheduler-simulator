@@ -32,19 +32,12 @@ public class PriorityArray {
         return bitmap[priority] == 0;
     }
 
-    /*  Acomodar este metodo
-
-    public Process getProcess() {
-
-        int i = 0;
-        while (i < bitmap.length && bitmap[i] == 0)
-            i++;
-
+    public Process getProcess(int priority) {
         if (i == bitmap.length)
             return null;
         else
-            return queue.get(i); //TODO poner el string en vez de la prioridad
-    }*/
+            return queue.get(i);
+    }
 
     public void addProcess(Process process, int priority) {
             //System.out.println("holaaa");
