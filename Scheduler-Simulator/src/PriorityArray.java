@@ -5,33 +5,65 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PriorityArray {
 
-    private int numActiveProcesses = 0;
-    private int[] bitmap = new int[139];
+    private int numActiveProcesses = 0; /**< El numero de procesos activos.*/
+    private int[] bitmap = new int[139]; /**< Bitmap para verificar rapidamente si una prioridad esta vacia.*/
     // private LinkedList<Process> queue[] = new [139];
     // No se puede combinar arreglos y listas. Por eso uso Tabla hash con Integer
     private ConcurrentHashMap<Integer,LinkedList<Process>> queue
-                    = new ConcurrentHashMap<Integer,LinkedList<Process>>(139);
+                    = new ConcurrentHashMap<Integer,LinkedList<Process>>(139); /**< Arreglo de listas enlazadas. */
 
+    /**
+     * @brief Retorna el numero de procesos activos.
+     * @return Numero de procesos activos.
+     */
     public int getNumActiveProcesses() {
         return numActiveProcesses;
     }
-
+    
+    /**
+     * @brief Aumenta el numero de procesos activos. 
+     */
     public void increaseNumActiveProcesses() {
         numActiveProcesses++;
     }
+    
+    /**
+     * @brief Decrementa el numero de procesos activos.
+     */
+    public void decreaseNumActiveProcesses() {
+        numActiveProcesses--;
+    }
 
+    /**
+     * @brief Se agrega una prioridad al Bitmap.
+     * @param priority Prioridad a agregar.
+     */
     public void addPriorityBitmap(int priority) {
         bitmap[priority] = 1;
     }
-
+    
+    /**
+     * @brief Se elimina del Bitmap la prioridad dada.
+     * @param priority Prioridad a eliminar.
+     */
     public void removePriorityBitmap(int priority) {
         bitmap[priority] = 0;
     }
 
+    /**
+     * @brief Verifica si la prioridad dada esta vacia.
+     * @param priority Prioridad a verificar.
+     * @return Si la prioridad dada esta vacia.
+     */
     public boolean isPriorityEmpty(int priority) {
         return bitmap[priority] == 0;
     }
-
+    
+    /**
+     * @brief Retorna el primer proceso de la prioridad dada. 
+     * @param priority Prioridad del proceso.
+     * @return Primer proceso de la prioridad dada.
+     */
     public Process getProcess(int priority) {
         List<Process> temp;
         if (priority == bitmap.length){
@@ -41,18 +73,26 @@ public class PriorityArray {
             return temp.get(0);
         }
     }
-
-    public int tamanioMax() {
+    
+    /**
+     * @brief Retorna la longitud del Bitmap.
+     * @return Longitud del Bitmap.
+     */
+    public int getLengthBitmap() {
         return bitmap.length;
     }
 
+    /**
+     * @brief Agrega un proceso a la prioridad dada.
+     * @param process Proceso a agregar.
+     * @param priority Prioridad donde se agrega el proceso.
+     */
     public void addProcess(Process process, int priority) {
-            //System.out.println("holaaa");
+
         LinkedList<Process> lista ;
 
         if (bitmap[priority] == 0)
             addPriorityBitmap(priority);
-
 
         if (queue.get(priority) == null) {
             lista = new LinkedList<Process>();
@@ -62,39 +102,49 @@ public class PriorityArray {
             lista = queue.get(priority);
             lista.addLast(process);
         }
+        
         increaseNumActiveProcesses();
     }
 
-
-    /* Acomodar este metodo
-
+    /**
+     * @brief Elimina el primer proceso de la prioridad dada.
+     * @param priority Prioridad de donde se elimina el proceso.
+     * @return Proceso que se elimino.
+     */
     public Process removeProcess(int priority) {
-        if (bitmap[priority] == 1) {
-            removePriorityBitmap(priority);
-        }
-        return queue[priority].pollFirst();
-    }*/
+        
+        Process process = null;
+        
+        if (bitmap[priority] == 1) {        
+            process = queue.get(priority).removeFirst();
+            
+            if (queue.get(priority).isEmpty())
+                removePriorityBitmap(priority);
+            
+            decreaseNumActiveProcesses();           
+        }        
+        return process;
+    }
 
-    /*
-        Funcion nueva creada para verificar las listas prioridad
-    */
-    public void imprimirTabla(){
+    /**
+     * @brief Imprime las listas de prioridades.
+     */
+    public void printTable(){
         Iterator<LinkedList<Process>> listIterator;
-        Iterator<Process> listIteratorProceso;
+        Iterator<Process> listIteratorProcess;
         List<Process> elem;
-        Process proceso;
+        Process process;
 
         for (int i = 0; i < 140; i++) {
             elem = queue.get(i);
             if (elem != null) {
                 System.out.printf("\nLista de prioridad %d", i);
-                listIteratorProceso = elem.iterator();
-                while (listIteratorProceso.hasNext()){
-                    proceso = listIteratorProceso.next();
-                    proceso.print();
+                listIteratorProcess = elem.iterator();
+                while (listIteratorProcess.hasNext()){
+                    process = listIteratorProcess.next();
+                    process.print();
                 }
             }
-
         }
     }
 }

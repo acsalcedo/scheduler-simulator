@@ -39,12 +39,12 @@ public class RunQueue {
         return currentProcess;
     }
 
-    public void setCurretProcess(Process process){
+    public void setCurrentProcess(Process process){
         currentProcess = process;
     }
 
-    public void imprimirProcesosActivos() {
-        activeProcesses.imprimirTabla();
+    public void printActiveProcesses() {
+        activeProcesses.printTable();
     }
 
 

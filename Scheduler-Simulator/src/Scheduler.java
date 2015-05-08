@@ -1,38 +1,38 @@
 
 public class Scheduler {
 
-    boolean inicializar = true;
+    boolean initialize = true;
 
-    public void tiempoBase(Process proceso) {
-        int resultado;
-        if (proceso.getTimeSlice()>= 120) {
-            resultado = (140 - proceso.getTimeSlice())*20;
+    public void baseTime(Process process) {
+        int result;
+        if (process.getTimeSlice()>= 120) {
+            result = (140 - process.getTimeSlice())*20;
         } else {
-            resultado = (140 - proceso.getTimeSlice())*5;
+            result = (140 - process.getTimeSlice())*5;
         }
-        proceso.setTimeSlice(resultado);
+        process.setTimeSlice(result);
     }
 
-    public void calcPrioridadDinamica(Process proceso) {
-        int resultado = Math.max(100, Math.min(proceso.getStaticPriority()+5, 139));
-        proceso.setDynamicPriority(resultado);
+    public void calcDynamicPriority(Process process) {
+        int result = Math.max(100, Math.min(process.getStaticPriority()+5, 139));
+        process.setDynamicPriority(result);
     }
 
     // Funcion equivalente a schedule() de Linux 2.6
-    public boolean planificar(RunQueue cpu){
+    public boolean schedule(RunQueue cpu){
 
-        if (inicializar){
+        if (initialize){
             // Suponiendo que comienza inicia el sistema. Busca un proceso
             // Se elige el proceso de prioridad mas alta que suelen ser RT
-            PriorityArray activos = cpu.getActiveProcesses();
-            Process nuevoProceso = null;
+            PriorityArray active = cpu.getActiveProcesses();
+            Process newProcess = null;
             int i = 0;
-            while ((i < activos.tamanioMax()) && (activos.isPriorityEmpty(i)))
+            while ((i < active.getLengthBitmap()) && (active.isPriorityEmpty(i)))
                 i++;
 
-            nuevoProceso = activos.getProcess(i);
-            cpu.setCurretProcess(nuevoProceso);
-            inicializar = false;
+            newProcess = active.getProcess(i);
+            cpu.setCurrentProcess(newProcess);
+            initialize = false;
             return true;
         }
         return false;
