@@ -33,6 +33,19 @@ public class PriorityArray {
     public void decreaseNumActiveProcesses() {
         numActiveProcesses--;
     }
+    
+    public Process getHighestPriorityProcess() {
+        
+        int i = 0;
+        
+        while (i < bitmap.length && bitmap[i] != 1)
+            i++;
+        
+        if (i == bitmap.length)
+            return null;
+             
+        return queue.get(i).removeFirst();
+    }
 
     /**
      * @brief Se agrega una prioridad al Bitmap.
@@ -65,13 +78,12 @@ public class PriorityArray {
      * @return Primer proceso de la prioridad dada.
      */
     public Process getProcess(int priority) {
-        List<Process> temp;
-        if (priority == bitmap.length){
+        
+        if (priority == bitmap.length)
             return null;
-        } else {
-            temp=queue.get(priority);
-            return temp.get(0);
-        }
+        else 
+            return queue.get(priority).get(0);
+        
     }
     
     /**

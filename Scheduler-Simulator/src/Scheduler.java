@@ -24,14 +24,13 @@ public class Scheduler {
         if (initialize){
             // Suponiendo que comienza inicia el sistema. Busca un proceso
             // Se elige el proceso de prioridad mas alta que suelen ser RT
-            PriorityArray active = cpu.getActiveProcesses();
+           
             Process newProcess = null;
-            int i = 0;
-            while ((i < active.getLengthBitmap()) && (active.isPriorityEmpty(i)))
-                i++;
-
-            newProcess = active.getProcess(i);
-            cpu.setCurrentProcess(newProcess);
+            newProcess = cpu.getHighestPriorityActive();
+            
+            if (newProcess != null) 
+                cpu.setCurrentProcess(newProcess);
+            
             initialize = false;
             return true;
         }

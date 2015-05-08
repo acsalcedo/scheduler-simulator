@@ -32,6 +32,8 @@ public class Dispatcher {
         while (execute){
 
         }
+        
+        // Timer, Dispatcher, Scheduler -> Hilos
         /*
             Por aqui deberia ir la simulacion del CPU. Pienso que deberiamos usar hilo
             para ejecutar el scheduler cada 1milisegundo para similar el timer

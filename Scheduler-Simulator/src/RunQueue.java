@@ -46,6 +46,10 @@ public class RunQueue {
     public void printActiveProcesses() {
         activeProcesses.printTable();
     }
+    
+    public Process getHighestPriorityActive() {
+        return activeProcesses.getHighestPriorityProcess();
+    }
 
 
 }
