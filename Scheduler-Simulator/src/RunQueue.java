@@ -22,13 +22,22 @@ public class RunQueue {
         expiredProcesses = exchange;
     }
 
-    public PriorityArray getActiveProcesses(){
+    public PriorityArray getActiveProcesses() {
         return activeProcesses;
+    }
+
+    public PriorityArray getExpiredProcesses() {
+        return expiredProcesses;
     }
 
 
     public void addActiveProcess(Process process, int priority) {
         activeProcesses.addProcess(process, priority);
+    }
+
+    public Process removeActiveProcess(int priority) {
+        return activeProcesses.removeProcess(priority);
+
     }
 
     public void addExpiredProcess(Process process, int priority) {
@@ -44,9 +53,15 @@ public class RunQueue {
     }
 
     public void printActiveProcesses() {
+        System.out.printf("\nPROCESOS ACTIVOS");
         activeProcesses.printTable();
     }
-    
+
+    public void printExpiredProcesses() {
+        System.out.printf("\nPROCESOS EXPIRADOS");
+        expiredProcesses.printTable();
+    }
+
     public Process getHighestPriorityActive() {
         return activeProcesses.getHighestPriorityProcess();
     }

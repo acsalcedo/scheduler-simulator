@@ -14,6 +14,7 @@ public class Process {
     private String state; // TODO enum
     private boolean needsIO;
     private int IOTime;
+    private boolean Needs_ReSched;
     private String processType; // TODO enum
 
     public Process() {}
@@ -28,6 +29,10 @@ public class Process {
 
      public int getPID() {
         return PID;
+    }
+
+    public void setPID(int PID) {
+        this.PID = PID;
     }
 
     public void setStaticPriority(int staticPriority) {
@@ -65,6 +70,15 @@ public class Process {
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
+
+    public void setNeeds_ReSched(boolean cent) {
+        Needs_ReSched = cent;
+    }
+
+    public boolean getNeeds_ReSched() {
+        return Needs_ReSched;
+    }
+
 
     public int getTotalTime() {
         return totalTime;
@@ -127,7 +141,8 @@ public class Process {
 
     public void print() {
 
-        System.out.println("\n   Scheduler politic: " + schedulerPolitic +
+        System.out.println("\n   PID: " + PID +
+                           "\n   Scheduler politic: " + schedulerPolitic +
                            "\n   Prioridad estatica: " + staticPriority +
                            "\n   Prioridad dinamica: " + dynamicPriority +
                            "\n   Timeslice: " + timeSlice +

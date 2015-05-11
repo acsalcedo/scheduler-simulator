@@ -6,11 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PriorityArray {
 
     private int numActiveProcesses = 0; /**< El numero de procesos activos.*/
-    private int[] bitmap = new int[139]; /**< Bitmap para verificar rapidamente si una prioridad esta vacia.*/
+    private int[] bitmap = new int[140]; /**< Bitmap para verificar rapidamente si una prioridad esta vacia.*/
     // private LinkedList<Process> queue[] = new [139];
     // No se puede combinar arreglos y listas. Por eso uso Tabla hash con Integer
     private ConcurrentHashMap<Integer,LinkedList<Process>> queue
-                    = new ConcurrentHashMap<Integer,LinkedList<Process>>(139); /**< Arreglo de listas enlazadas. */
+                    = new ConcurrentHashMap<Integer,LinkedList<Process>>(140); /**< Arreglo de listas enlazadas. */
 
     /**
      * @brief Retorna el numero de procesos activos.
@@ -19,32 +19,41 @@ public class PriorityArray {
     public int getNumActiveProcesses() {
         return numActiveProcesses;
     }
-    
+
     /**
-     * @brief Aumenta el numero de procesos activos. 
+     * @brief Aumenta el numero de procesos activos.
      */
     public void increaseNumActiveProcesses() {
         numActiveProcesses++;
     }
-    
+
     /**
      * @brief Decrementa el numero de procesos activos.
      */
     public void decreaseNumActiveProcesses() {
         numActiveProcesses--;
     }
-    
+
     public Process getHighestPriorityProcess() {
-        
+
         int i = 0;
-        
+
         while (i < bitmap.length && bitmap[i] != 1)
             i++;
-        
+
         if (i == bitmap.length)
             return null;
-             
+
         return queue.get(i).removeFirst();
+    }
+
+    public int getHighestPriorityBitmap() {
+        int i = 0;
+
+        while (i < bitmap.length && bitmap[i] != 1)
+            i++;
+
+        return i;
     }
 
     /**
@@ -54,7 +63,7 @@ public class PriorityArray {
     public void addPriorityBitmap(int priority) {
         bitmap[priority] = 1;
     }
-    
+
     /**
      * @brief Se elimina del Bitmap la prioridad dada.
      * @param priority Prioridad a eliminar.
@@ -71,21 +80,21 @@ public class PriorityArray {
     public boolean isPriorityEmpty(int priority) {
         return bitmap[priority] == 0;
     }
-    
+
     /**
-     * @brief Retorna el primer proceso de la prioridad dada. 
+     * @brief Retorna el primer proceso de la prioridad dada.
      * @param priority Prioridad del proceso.
      * @return Primer proceso de la prioridad dada.
      */
     public Process getProcess(int priority) {
-        
+
         if (priority == bitmap.length)
             return null;
-        else 
+        else
             return queue.get(priority).get(0);
-        
+
     }
-    
+
     /**
      * @brief Retorna la longitud del Bitmap.
      * @return Longitud del Bitmap.
@@ -114,7 +123,7 @@ public class PriorityArray {
             lista = queue.get(priority);
             lista.addLast(process);
         }
-        
+
         increaseNumActiveProcesses();
     }
 
@@ -124,17 +133,17 @@ public class PriorityArray {
      * @return Proceso que se elimino.
      */
     public Process removeProcess(int priority) {
-        
+
         Process process = null;
-        
-        if (bitmap[priority] == 1) {        
+
+        if (bitmap[priority] == 1) {
             process = queue.get(priority).removeFirst();
-            
+
             if (queue.get(priority).isEmpty())
                 removePriorityBitmap(priority);
-            
-            decreaseNumActiveProcesses();           
-        }        
+
+            decreaseNumActiveProcesses();
+        }
         return process;
     }
 
@@ -150,11 +159,13 @@ public class PriorityArray {
         for (int i = 0; i < 140; i++) {
             elem = queue.get(i);
             if (elem != null) {
-                System.out.printf("\nLista de prioridad %d", i);
                 listIteratorProcess = elem.iterator();
-                while (listIteratorProcess.hasNext()){
-                    process = listIteratorProcess.next();
-                    process.print();
+                if (!elem.isEmpty()) {
+                    System.out.printf("\nLista de prioridad %d", i);
+                    while (listIteratorProcess.hasNext()){
+                        process = listIteratorProcess.next();
+                        process.print();
+                    }
                 }
             }
         }
