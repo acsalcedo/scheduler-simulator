@@ -24,6 +24,7 @@ public class Dispatcher {
             elem=listIterator.next();
             elem.setStaticPriority(120);
             elem.setPID(i++);
+            //Falta tomar asignacion de prioridad distinta para RT
             scheduler.calcDynamicPriority(elem);
             scheduler.baseTime(elem);
             cpu1.addActiveProcess(elem, elem.getDynamicPriority());
@@ -48,15 +49,16 @@ public class Dispatcher {
         };
 
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, 0, 100);
+        timer.scheduleAtFixedRate(timerTask, 0, scheduler.getInterruptInterval());
 
         while (cpu1.getCurrentProcess() != null ){}
 
-        // Timer, Dispatcher, Scheduler -> Hilos
+        // Timer, Dispatcher, Scheduler.schedule -> Hilos
         /*
-            Por aqui deberia ir la simulacion del CPU. Pienso que deberiamos usar hilo
-            para ejecutar el scheduler cada 1milisegundo para similar el timer
-            y usar scheduler_tick().
+            Se usa hilo para ejecutar el scheduler.scheduler_tick() cada
+            100 milisegundos para similar el timery usar . Luego
+            scheduler.schedule() como hilo parte pero invocado por
+            scheduler.scheduler_tick() para simular concurrencia del planificador
         */
     }
 

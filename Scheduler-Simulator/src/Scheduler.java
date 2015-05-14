@@ -2,6 +2,7 @@
 public class Scheduler {
 
     boolean initialize = true;
+    int interruptInterval = 100; // En milisegundos
 
     public void baseTime(Process process) {
         int result;
@@ -16,6 +17,10 @@ public class Scheduler {
     public void calcDynamicPriority(Process process) {
         int result = Math.max(100, Math.min(process.getStaticPriority()+5, 139));
         process.setDynamicPriority(result);
+    }
+
+    public int getInterruptInterval() {
+        return interruptInterval;
     }
 
     // Funcion equivalente a schedule() de Linux 2.6
@@ -39,7 +44,6 @@ public class Scheduler {
         // Caso (por razones de prueba ciclar los procesos)
         System.out.printf("\nInvocado schedule");
         temp = cpu.getCurrentProcess();
-        //System.out.printf("\nPrueba: %s", temp.getNeeds_ReSched());
         if (temp.getNeeds_ReSched()) {
             activeProcesses = cpu.getActiveProcesses();
             if (activeProcesses.getHighestPriorityBitmap() ==
@@ -63,7 +67,7 @@ public class Scheduler {
             }
 
         }
-
+        // Caso de expropiacion de procesos
         //Caso de reemplazo de proceso.
         return false;
     }
@@ -76,28 +80,48 @@ public class Scheduler {
 
         if (current != null){
             int timeUpdate = current.getTimeSlice();
-            if (timeUpdate > 0) {
-                timeUpdate = timeUpdate - 100 ;
-                current.setTimeSlice(timeUpdate);
-                System.out.printf("\nDecrementando timeSlice de proceso %d", current.getPID());
-                if (timeUpdate <= 0) {
-                    System.out.printf("\nProceso expirado: %d", current.getPID());
-                    baseTime(current);
-                    current.setNeeds_ReSched(true);
-                    temp = cpu.removeActiveProcess(current.getDynamicPriority());
+            switch (current.getSchedulerPolitic()) {
+                case "NORMAL":
+                    System.out.printf("NORMAL");
+                    if (timeUpdate > 0) {
+                        timeUpdate -= this.interruptInterval;
+                        System.out.printf("\nDecrementando timeslice de proceso %d",
+                                          current.getPID());
+                        current.setTimeSlice(timeUpdate);
+                    } else {
+                        System.out.printf("\nProceso expirado: %d", current.getPID());
+                        baseTime(current);
+                        current.setNeeds_ReSched(true);
+                        temp = cpu.removeActiveProcess(current.getDynamicPriority());
+                        // Falta recalcular la prioridad dinamica
+                        cpu.addExpiredProcess(temp, temp.getDynamicPriority());
+                        //cpu.printExpiredProcesses();
+                        //cpu.printActiveProcesses();
+                        sched.schedule(cpu);
+                    }
 
-                    cpu.addExpiredProcess(temp, temp.getDynamicPriority());
-                    //cpu.printExpiredProcesses();
-                    //cpu.printActiveProcesses();
-                    sched.schedule(cpu);
-                    return true;
-                }
+                    break;
+                case "RR":
+                    System.out.printf("RR");
+                    if (timeUpdate > 0) {
+                        timeUpdate -= this.interruptInterval;
+                        System.out.printf("\nDecrementando timeslice de proceso %d",
+                                          current.getPID());
+                        current.setTimeSlice(timeUpdate);
+                    } else {
+                        System.out.printf("\nProceso expirado: %d", current.getPID());
+                        baseTime(current);
+                        current.setNeeds_ReSched(true);
+                        // Los RT se consideran Active nunca van a Expired
+                        temp = cpu.removeActiveProcess(current.getDynamicPriority());
+                        cpu.addActiveProcess(temp, current.getDynamicPriority());
+                        //cpu.printExpiredProcesses();
+                        //cpu.printActiveProcesses();
+                        sched.schedule(cpu);
+                    }
+                    break;
             }
-
-            if (timeUpdate == 0) {
-                sched.schedule(cpu);
-                return true;
-            }
+            return true;
         }
         return false;
     }
