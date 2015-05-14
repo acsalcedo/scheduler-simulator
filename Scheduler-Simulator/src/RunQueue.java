@@ -48,6 +48,10 @@ public class RunQueue {
         return currentProcess;
     }
 
+    public boolean isEmptyActiveProcess(){
+        return activeProcesses.isEmpty();
+    }
+
     public void setCurrentProcess(Process process){
         currentProcess = process;
     }

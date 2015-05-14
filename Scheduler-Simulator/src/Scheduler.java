@@ -1,8 +1,14 @@
 
 public class Scheduler {
 
-    boolean initialize = true;
-    int interruptInterval = 100; // En milisegundos
+    private boolean initialize = true;
+    private final int priority_RT;
+    private final int interruptInterval; // En milisegundos
+
+    Scheduler(int interruptInterval, int priority_RT){
+        this.interruptInterval = interruptInterval;
+        this.priority_RT = priority_RT;
+    }
 
     public void baseTime(Process process) {
         int result;
@@ -15,7 +21,19 @@ public class Scheduler {
     }
 
     public void calcDynamicPriority(Process process) {
-        int result = Math.max(100, Math.min(process.getStaticPriority()+5, 139));
+        int result = 120;
+
+        switch (process.getSchedulerPolitic()) {
+            case "FIFO": // Unicamente para probar
+                result = priority_RT - 10;
+            break;
+            case "RR":
+                result = priority_RT;
+            break;
+            case "NORMAL":
+                result = Math.max(100, Math.min(process.getStaticPriority()+5, 139));
+            break;
+        }
         process.setDynamicPriority(result);
     }
 
@@ -23,51 +41,78 @@ public class Scheduler {
         return interruptInterval;
     }
 
+    public void inicializar(RunQueue cpu){
+        // Suponiendo que comienza inicia el sistema. Busca un proceso
+        // Se elige el proceso de prioridad mas alta que suelen ser RT
+        PriorityArray activeProcesses = cpu.getActiveProcesses();
+        Process temp;
+        int highPriority = activeProcesses.getHighestPriorityBitmap();
+        temp = activeProcesses.getProcess(highPriority);
+
+        if (temp != null)
+            cpu.setCurrentProcess(temp);
+    }
+
     // Funcion equivalente a schedule() de Linux 2.6
     public boolean schedule(RunQueue cpu){
-        Process temp = null, next = null;
+        Process temp = null, next = null, current = null;
         PriorityArray activeProcesses;
-
-        if (initialize){
-            // Suponiendo que comienza inicia el sistema. Busca un proceso
-            // Se elige el proceso de prioridad mas alta que suelen ser RT
-            activeProcesses = cpu.getActiveProcesses();
-            temp = activeProcesses.getProcess(activeProcesses.getHighestPriorityBitmap());
-
-            if (temp != null)
-                cpu.setCurrentProcess(temp);
-
-            initialize = false;
-            return true;
-        }
+        int highPriority;
 
         // Caso (por razones de prueba ciclar los procesos)
+        // Realizar bloqueo del runqueue cuando schedule sea implementado como hilo
         System.out.printf("\nInvocado schedule");
-        temp = cpu.getCurrentProcess();
-        if (temp.getNeeds_ReSched()) {
+        current = cpu.getCurrentProcess();
+        if (current.getNeeds_ReSched()) {
             activeProcesses = cpu.getActiveProcesses();
-            if (activeProcesses.getHighestPriorityBitmap() ==
-                    temp.getDynamicPriority()){
-
-                System.out.printf("\nPrioridad sin cambio: %d", temp.getDynamicPriority());
-                next = activeProcesses.getProcess(temp.getDynamicPriority());
+            highPriority = activeProcesses.getHighestPriorityBitmap();
+            if (highPriority == current.getDynamicPriority()) {
+                System.out.printf("\nPrioridad sin cambio: %d", current.getDynamicPriority());
+                next = activeProcesses.getProcess(current.getDynamicPriority());
                 // Lista vacia
                 if (next == null) {
                     System.out.printf("\nLISTA VACIA");
                 }
                 System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
-                              temp.getPID(), next.getPID());
+                              current.getPID(), next.getPID());
 
-                temp.setNeeds_ReSched(false);
+                current.setNeeds_ReSched(false);
                 cpu.setCurrentProcess(next);
                 return true;
             } else {
-                System.out.printf("\nNO HAY MAS PROCESOS");
-                cpu.setCurrentProcess(null); //Para finalizar el simulador
-            }
+                // Expropiacion sobre current
+                if (highPriority > current.getDynamicPriority()){
+                    System.out.printf("\nPrioridad nueva: %d", highPriority);
+                    System.out.printf("\nPrioridad anterior: %d", current.getDynamicPriority());
+                    next = activeProcesses.getProcess(highPriority);
+                    System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
+                                  current.getPID(), next.getPID());
 
+                    current.setNeeds_ReSched(false);
+                    cpu.setCurrentProcess(next);
+                    return true;
+                    // Dejar que un proceso de menor prioridad acceda al CPU
+                } else if (activeProcesses.isPriorityEmpty(current.getDynamicPriority())) {
+                    System.out.printf("\nPrioridad nueva: %d", highPriority);
+                    System.out.printf("\nPrioridad anterior: %d", current.getDynamicPriority());
+                    next = activeProcesses.getProcess(highPriority);
+                    System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
+                                  current.getPID(), next.getPID());
+
+                    current.setNeeds_ReSched(false);
+                    cpu.setCurrentProcess(next);
+                    return true;
+                }
+
+                // Intercambiar Active y Expired processes
+                if (cpu.isEmptyActiveProcess()){
+                    System.out.printf("\nNO HAY MAS PROCESOS");
+                    cpu.exchangeActiveExpiredProcesses();
+                    inicializar(cpu);
+                }
+            }
         }
-        // Caso de expropiacion de procesos
+        // Falta caso FIFO
         //Caso de reemplazo de proceso.
         return false;
     }
@@ -82,7 +127,7 @@ public class Scheduler {
             int timeUpdate = current.getTimeSlice();
             switch (current.getSchedulerPolitic()) {
                 case "NORMAL":
-                    System.out.printf("NORMAL");
+                    System.out.printf("\nPolitica NORMAL");
                     if (timeUpdate > 0) {
                         timeUpdate -= this.interruptInterval;
                         System.out.printf("\nDecrementando timeslice de proceso %d",
@@ -99,10 +144,9 @@ public class Scheduler {
                         //cpu.printActiveProcesses();
                         sched.schedule(cpu);
                     }
-
                     break;
                 case "RR":
-                    System.out.printf("RR");
+                    System.out.printf("\nPolitica RR");
                     if (timeUpdate > 0) {
                         timeUpdate -= this.interruptInterval;
                         System.out.printf("\nDecrementando timeslice de proceso %d",
@@ -120,6 +164,12 @@ public class Scheduler {
                         sched.schedule(cpu);
                     }
                     break;
+                case "FIFO":
+                    System.out.printf("\nPolitica FIFO");
+                    current.procesar(interruptInterval);
+                    // Si se acaba su tiempo de CPU, cambia de proceso.
+                    if (current.getNeeds_ReSched())
+                        sched.schedule(cpu);
             }
             return true;
         }

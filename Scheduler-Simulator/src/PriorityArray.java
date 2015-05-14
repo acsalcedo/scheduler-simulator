@@ -48,7 +48,7 @@ public class PriorityArray {
     }
 
     public int getHighestPriorityBitmap() {
-        int i = 0;
+        int i = 0; // PriorityArray vacio
 
         while (i < bitmap.length && bitmap[i] != 1)
             i++;
@@ -79,6 +79,16 @@ public class PriorityArray {
      */
     public boolean isPriorityEmpty(int priority) {
         return bitmap[priority] == 0;
+    }
+
+    public boolean isEmpty() {
+        boolean cent = true;
+        int i = 0;
+
+        while (i < bitmap.length && (cent = (bitmap[i] != 1)))
+            i++;
+
+        return cent;
     }
 
     /**

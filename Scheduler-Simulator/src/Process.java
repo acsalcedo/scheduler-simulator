@@ -7,14 +7,14 @@ public class Process {
     private int initTime;
     private Process proximo;
     private Process anterior;
-    private int totalTime;
+    private int totalTime;  // Tiempo de CPU
     private int runnningTime;
     private int timeInQueue;
     private int timeSlice;
     private String state; // TODO enum
     private boolean needsIO;
     private int IOTime;
-    private boolean Needs_ReSched;
+    private boolean needs_ReSched;
     private String processType; // TODO enum
 
     public Process() {}
@@ -72,11 +72,27 @@ public class Process {
     }
 
     public void setNeeds_ReSched(boolean cent) {
-        Needs_ReSched = cent;
+        needs_ReSched = cent;
     }
 
     public boolean getNeeds_ReSched() {
-        return Needs_ReSched;
+        return needs_ReSched;
+    }
+
+    public void procesar(int decremento){
+        if (!(schedulerPolitic.equals("FIFO"))) {
+            totalTime -= timeSlice;
+        } else {
+            totalTime -= decremento;
+        }
+
+        if (totalTime <= 0){
+            totalTime = 0;
+            needs_ReSched = true;
+            /*if (needsIO) {
+
+            }*/
+        }
     }
 
 

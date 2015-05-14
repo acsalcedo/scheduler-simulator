@@ -2,29 +2,31 @@
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-
+/*
+    Se ejecuta como Dispatcher {Tiempo para accionar el timer}
+*/
 public class Dispatcher {
 
     public static void main(String argv[]) {
 
         ReadXML xml = new ReadXML();
         boolean execute = true;
-        int i = 0;
+        System.out.printf("\nIntervalo del timer: %s", argv[0]);
+        int i = 0, interruptInterval = Integer.parseInt(argv[0]);
         xml.getXML("prueba.xml");
-        RunQueue cpu1 = new RunQueue();
-        Scheduler scheduler = new Scheduler();
+        final RunQueue cpu1 = new RunQueue();
+        final Scheduler scheduler = new Scheduler(interruptInterval, 99);
 
         Iterator<Process> listIterator = xml.processList.iterator();
 
-        System.out.println("Numero de procesos en RunQueue: " +xml.processList.size());
+        System.out.println("\nNumero de procesos en RunQueue: " +xml.processList.size());
 
-        // Inicializacion de valores iniciales de
+        // Inicializacion de valores iniciales de los Process y RunQueue
         while (listIterator.hasNext()) {
             Process elem;
             elem=listIterator.next();
             elem.setStaticPriority(120);
             elem.setPID(i++);
-            //Falta tomar asignacion de prioridad distinta para RT
             scheduler.calcDynamicPriority(elem);
             scheduler.baseTime(elem);
             cpu1.addActiveProcess(elem, elem.getDynamicPriority());
@@ -33,7 +35,7 @@ public class Dispatcher {
         cpu1.printActiveProcesses();
         System.out.printf("\nCOMIENZA EL SIMULADOR");
 
-        scheduler.schedule(cpu1);
+        scheduler.inicializar(cpu1);
         System.out.printf("\nProceso en current: %d", cpu1.getCurrentProcess().getPID());
 
         TimerTask timerTask = new TimerTask()
@@ -43,7 +45,7 @@ public class Dispatcher {
               * a los observadores de este modelo.
               */
             public void run() {
-                System.out.printf("\nInvocado scheduler_tick");
+                System.out.printf("\n\nInvocado scheduler_tick");
                 scheduler.schedule_tick(cpu1,scheduler);
             }
         };
