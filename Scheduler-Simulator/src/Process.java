@@ -1,5 +1,14 @@
 
 public class Process {
+
+    public enum StateProcess {
+        TASK_INTERRUPTIBLE, TASK_RUNNING, TASK_UNINTERRUPTIBLE, EXIT_DEAD
+    }
+
+    public enum SchedulerPolitic {
+        FIFO, RR, NORMAL
+    }
+
     private int PID;
     private int staticPriority;
     private int dynamicPriority;
@@ -16,6 +25,7 @@ public class Process {
     private int IOTime;
     private boolean needs_ReSched;
     private String processType; // TODO enum
+
 
     public Process() {}
 
@@ -79,22 +89,20 @@ public class Process {
         return needs_ReSched;
     }
 
+
     public void procesar(int decremento){
-        if (!(schedulerPolitic.equals("FIFO"))) {
-            totalTime -= timeSlice;
-        } else {
-            totalTime -= decremento;
-        }
+        totalTime -= decremento;
 
         if (totalTime <= 0){
+            System.out.printf("\nProceso terminado. Cede el CPU");
             totalTime = 0;
             needs_ReSched = true;
             /*if (needsIO) {
 
             }*/
+            state = "EXIT_DEAD";
         }
     }
-
 
     public int getTotalTime() {
         return totalTime;

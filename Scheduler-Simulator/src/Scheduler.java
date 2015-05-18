@@ -1,13 +1,21 @@
 
-public class Scheduler {
+public class Scheduler extends Thread {
 
     private boolean initialize = true;
     private final int priority_RT;
     private final int interruptInterval; // En milisegundos
+    private RunQueue cpu;
 
-    Scheduler(int interruptInterval, int priority_RT){
+    Scheduler(int interruptInterval, int priority_RT, RunQueue cpu){
         this.interruptInterval = interruptInterval;
         this.priority_RT = priority_RT;
+        this.cpu = cpu;
+        new Thread(this, "schedule");
+    }
+
+    public void run() {
+        while (true)
+            schedule(cpu);
     }
 
     public void baseTime(Process process) {
@@ -44,10 +52,8 @@ public class Scheduler {
     public void inicializar(RunQueue cpu){
         // Suponiendo que comienza inicia el sistema. Busca un proceso
         // Se elige el proceso de prioridad mas alta que suelen ser RT
-        PriorityArray activeProcesses = cpu.getActiveProcesses();
         Process temp;
-        int highPriority = activeProcesses.getHighestPriorityBitmap();
-        temp = activeProcesses.getProcess(highPriority);
+        temp =  cpu.getHighestPriorityActive();
 
         if (temp != null)
             cpu.setCurrentProcess(temp);
@@ -57,67 +63,83 @@ public class Scheduler {
     public boolean schedule(RunQueue cpu){
         Process temp = null, next = null, current = null;
         PriorityArray activeProcesses;
-        int highPriority;
+        int newPriority, oldPriority;
 
         // Caso (por razones de prueba ciclar los procesos)
         // Realizar bloqueo del runqueue cuando schedule sea implementado como hilo
-        System.out.printf("\nInvocado schedule");
+
         current = cpu.getCurrentProcess();
         if (current.getNeeds_ReSched()) {
+            System.out.printf("\nInvocado schedule");
             activeProcesses = cpu.getActiveProcesses();
-            highPriority = activeProcesses.getHighestPriorityBitmap();
-            if (highPriority == current.getDynamicPriority()) {
-                System.out.printf("\nPrioridad sin cambio: %d", current.getDynamicPriority());
-                next = activeProcesses.getProcess(current.getDynamicPriority());
-                // Lista vacia
-                if (next == null) {
-                    System.out.printf("\nLISTA VACIA");
-                }
+            oldPriority = current.getDynamicPriority();
+
+            // Retirar un proceso del Runqueue
+            if (current.getState().equals("EXIT_DEAD")){
+                System.out.printf("\nRetirar proceso %d del RunQueue", current.getPID());
+                next = cpu.removeActiveProcess(oldPriority);
+                next = null;
+                cpu.printActiveProcesses();
+            }
+
+            newPriority = activeProcesses.getHighestPriorityBitmap();
+            if (newPriority == oldPriority) {
+                System.out.printf("\nPrioridad sin cambio: %d", oldPriority);
+                next = activeProcesses.getProcess(oldPriority);
                 System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
                               current.getPID(), next.getPID());
 
                 current.setNeeds_ReSched(false);
                 cpu.setCurrentProcess(next);
                 return true;
-            } else {
-                // Expropiacion sobre current
-                if (highPriority > current.getDynamicPriority()){
-                    System.out.printf("\nPrioridad nueva: %d", highPriority);
-                    System.out.printf("\nPrioridad anterior: %d", current.getDynamicPriority());
-                    next = activeProcesses.getProcess(highPriority);
-                    System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
-                                  current.getPID(), next.getPID());
-
-                    current.setNeeds_ReSched(false);
-                    cpu.setCurrentProcess(next);
-                    return true;
-                    // Dejar que un proceso de menor prioridad acceda al CPU
-                } else if (activeProcesses.isPriorityEmpty(current.getDynamicPriority())) {
-                    System.out.printf("\nPrioridad nueva: %d", highPriority);
-                    System.out.printf("\nPrioridad anterior: %d", current.getDynamicPriority());
-                    next = activeProcesses.getProcess(highPriority);
-                    System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
-                                  current.getPID(), next.getPID());
-
-                    current.setNeeds_ReSched(false);
-                    cpu.setCurrentProcess(next);
-                    return true;
-                }
-
-                // Intercambiar Active y Expired processes
-                if (cpu.isEmptyActiveProcess()){
-                    System.out.printf("\nNO HAY MAS PROCESOS");
-                    cpu.exchangeActiveExpiredProcesses();
-                    inicializar(cpu);
-                }
             }
+
+            // Expropiacion sobre current
+            if (newPriority > oldPriority && newPriority < 140){
+                System.out.printf("\nPrioridad nueva: %d", newPriority);
+                System.out.printf("\nPrioridad anterior: %d", oldPriority);
+                next = activeProcesses.getProcess(newPriority);
+                System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
+                              current.getPID(), next.getPID());
+
+                current.setNeeds_ReSched(false);
+                cpu.setCurrentProcess(next);
+                return true;
+            }
+
+            // Dejar que un proceso de menor prioridad acceda al CPU
+            if (newPriority < oldPriority && activeProcesses.isPriorityEmpty(oldPriority)) {
+                System.out.printf("\nPrioridad nueva: %d", newPriority);
+                System.out.printf("\nPrioridad anterior: %d", oldPriority);
+                next = activeProcesses.getProcess(newPriority);
+                System.out.printf("\nCAMBIAR PROCESO. \nActual: %d \nProximo: %d",
+                              current.getPID(), next.getPID());
+
+                current.setNeeds_ReSched(false);
+                cpu.setCurrentProcess(next);
+                return true;
+            }
+
+            // Intercambiar las listas Active y Expired
+            if ((cpu.isEmptyActiveProcess()) && (!cpu.isEmptyExpiredProcess())){
+
+                cpu.exchangeActiveExpiredProcesses();
+                inicializar(cpu);
+                return true;
+            } else {
+                System.out.printf("\n\nColocar proceso Swapper ");
+                // Colocar el proceso swapper
+                cpu.setIdleOnCurrent();
+                return true;
+            }
+
         }
         // Falta caso FIFO
         //Caso de reemplazo de proceso.
         return false;
     }
 
-    public boolean schedule_tick(RunQueue cpu, Scheduler sched){
+    public boolean schedule_tick(RunQueue cpu){
 
         Process current= cpu.getCurrentProcess();
         Process temp;
@@ -133,6 +155,7 @@ public class Scheduler {
                         System.out.printf("\nDecrementando timeslice de proceso %d",
                                           current.getPID());
                         current.setTimeSlice(timeUpdate);
+                        current.procesar(this.interruptInterval);
                     } else {
                         System.out.printf("\nProceso expirado: %d", current.getPID());
                         baseTime(current);
@@ -142,7 +165,6 @@ public class Scheduler {
                         cpu.addExpiredProcess(temp, temp.getDynamicPriority());
                         //cpu.printExpiredProcesses();
                         //cpu.printActiveProcesses();
-                        sched.schedule(cpu);
                     }
                     break;
                 case "RR":
@@ -152,24 +174,22 @@ public class Scheduler {
                         System.out.printf("\nDecrementando timeslice de proceso %d",
                                           current.getPID());
                         current.setTimeSlice(timeUpdate);
+                        current.procesar(this.interruptInterval);
                     } else {
-                        System.out.printf("\nProceso expirado: %d", current.getPID());
+                        System.out.printf("\nProceso sin timeslice: %d", current.getPID());
                         baseTime(current);
                         current.setNeeds_ReSched(true);
                         // Los RT se consideran Active nunca van a Expired
                         temp = cpu.removeActiveProcess(current.getDynamicPriority());
                         cpu.addActiveProcess(temp, current.getDynamicPriority());
-                        //cpu.printExpiredProcesses();
-                        //cpu.printActiveProcesses();
-                        sched.schedule(cpu);
                     }
                     break;
                 case "FIFO":
-                    System.out.printf("\nPolitica FIFO");
-                    current.procesar(interruptInterval);
                     // Si se acaba su tiempo de CPU, cambia de proceso.
-                    if (current.getNeeds_ReSched())
-                        sched.schedule(cpu);
+                    if (!current.getProcessType().equals("IDLE")) {
+                        current.procesar(interruptInterval);
+                        System.out.printf("\nPolitica FIFO");
+                    }
             }
             return true;
         }

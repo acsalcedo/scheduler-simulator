@@ -13,7 +13,7 @@ public class RunQueue {
         queue[1] = new PriorityArray();
         activeProcesses = queue[0];
         expiredProcesses = queue[1];
-        idleProcess = new Process("idle","idle");
+        idleProcess = new Process("FIFO","IDLE");
     }
 
     public void exchangeActiveExpiredProcesses() {
@@ -30,17 +30,21 @@ public class RunQueue {
         return expiredProcesses;
     }
 
+    public void setIdleOnCurrent() {
+        currentProcess = idleProcess;
+    }
 
-    public void addActiveProcess(Process process, int priority) {
+
+    synchronized public void addActiveProcess(Process process, int priority) {
         activeProcesses.addProcess(process, priority);
     }
 
-    public Process removeActiveProcess(int priority) {
+    synchronized public Process removeActiveProcess(int priority) {
         return activeProcesses.removeProcess(priority);
 
     }
 
-    public void addExpiredProcess(Process process, int priority) {
+    synchronized public void addExpiredProcess(Process process, int priority) {
         expiredProcesses.addProcess(process, priority);
     }
 
@@ -52,7 +56,11 @@ public class RunQueue {
         return activeProcesses.isEmpty();
     }
 
-    public void setCurrentProcess(Process process){
+    public boolean isEmptyExpiredProcess(){
+        return expiredProcesses.isEmpty();
+    }
+
+    synchronized public void setCurrentProcess(Process process){
         currentProcess = process;
     }
 
