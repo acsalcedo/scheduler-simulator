@@ -9,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ReadXML extends DefaultHandler {
 
-    public List<Process> processList = new ArrayList<Process>();
+    public List<Process> processList = new ArrayList<>();
     private Process currentProcess = new Process();
 
     public void getXML(String file) {
