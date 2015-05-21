@@ -4,11 +4,13 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -27,7 +29,7 @@ public class Interfaz extends javax.swing.JFrame {
     ProcessTableModel readyList;
     ProcessTableModel expiredList;
     ProcessTableModel IOQueue;
-    ProcessTableModel DoneList;
+    ProcessTableModel doneList;
     
     public Interfaz() {
         
@@ -38,12 +40,13 @@ public class Interfaz extends javax.swing.JFrame {
         readyList = new ProcessTableModel(xml.processList);
         expiredList = new ProcessTableModel(xml.processList);
         IOQueue = new ProcessTableModel(xml.processList);
-        DoneList = new ProcessTableModel(xml.processList);
+        doneList = new ProcessTableModel(xml.processList);
 
         setTitle("Linux Scheduler 2.6 Simulator");
         JLabel title = new JLabel("Linux Scheduler 2.6 Simulator");
         title.setHorizontalAlignment(CENTER);
         title.setVerticalAlignment(TOP);
+        title.setFont(new Font("Courier New", Font.BOLD, 20));
         
         setLayout(new CardLayout());
         JPanel mainPanel = new JPanel();
@@ -54,11 +57,34 @@ public class Interfaz extends javax.swing.JFrame {
         JTable readyTable = new JTable(readyList);
         readyTable.setSize(100,100);
         
-        setPreferredSize(new Dimension(500,500));
+        setPreferredSize(new Dimension(500,700));
         JScrollPane readyScrollPane = new JScrollPane(readyTable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         readyScrollPane.setPreferredSize(tableDim);
 
+        JPanel timerPanel = new JPanel();
+        timerPanel.setLayout(new FlowLayout());
+        timerPanel.setPreferredSize(new Dimension(500,50));
+        
+        JButton timerButton = new JButton();
+        timerButton.setPreferredSize(new Dimension(20,20));
+
+        JLabel timerLabel = new JLabel("Timer: ");
+        timerPanel.add(timerLabel);
+        timerPanel.add(timerButton);
+        
+        JPanel currentPanel = new JPanel();
+        currentPanel.setLayout(new FlowLayout());
+        currentPanel.setPreferredSize(new Dimension(500,50));
+        
+        JLabel cpuLabel = new JLabel("Current CPU Process: ");
+        JLabel currentIOLabel = new JLabel("Current IO Process: ");
+        
+        currentPanel.add(cpuLabel);
+        currentPanel.add(currentIOLabel);
+        
+        mainPanel.add(timerPanel);
+        mainPanel.add(currentPanel);
         JLabel readyLabel = new JLabel("Ready List");
         JPanel readyPanel = new JPanel();
         
@@ -97,6 +123,22 @@ public class Interfaz extends javax.swing.JFrame {
         mainPanel.add(IOPanel);
         mainPanel.add(IOScrollPane);
                 
+        JTable doneTable = new JTable(doneList);
+        JScrollPane doneScrollPane = new JScrollPane(doneTable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        doneScrollPane.setPreferredSize(tableDim);
+ 
+        JLabel doneLabel = new JLabel("Done List");
+        JPanel donePanel = new JPanel();
+        
+        donePanel.setPreferredSize(labelDim);
+        donePanel.add(doneLabel);
+        
+        mainPanel.add(donePanel);
+        mainPanel.add(doneScrollPane);
+        
+        
         add(mainPanel);
         pack();
         setVisible(true);
