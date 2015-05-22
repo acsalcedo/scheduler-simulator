@@ -11,6 +11,8 @@ import javax.swing.table.AbstractTableModel;
         public ProcessTableModel(List<Process> processes) {
             this.processList = new ArrayList<>(processes);
         }
+        
+        public ProcessTableModel() {}
 
         @Override
         public int getRowCount() {
