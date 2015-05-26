@@ -5,11 +5,13 @@ public class Scheduler extends Thread {
     private final int priority_RT;
     private final int interruptInterval; // En milisegundos
     private RunQueue cpu;
+    Interfaz interfaz;
 
-    Scheduler(int interruptInterval, int priority_RT, RunQueue cpu){
+    Scheduler(int interruptInterval, int priority_RT, RunQueue cpu, Interfaz interfaz){
         this.interruptInterval = interruptInterval;
         this.priority_RT = priority_RT;
         this.cpu = cpu;
+        this.interfaz = interfaz;
         new Thread(this, "schedule");
     }
 
@@ -55,8 +57,11 @@ public class Scheduler extends Thread {
         Process temp;
         temp =  cpu.getHighestPriorityActive();
 
-        if (temp != null)
+        if (temp != null) {
             cpu.setCurrentProcess(temp);
+            Integer pid = new Integer(temp.getPID());
+            interfaz.processCPULabel.setText(pid.toString());
+        }
     }
 
     // Funcion equivalente a schedule() de Linux 2.6
@@ -78,6 +83,13 @@ public class Scheduler extends Thread {
             if (current.getState().equals("EXIT_DEAD")){
                 System.out.printf("\nRetirar proceso %d del RunQueue", current.getPID());
                 next = cpu.removeActiveProcess(oldPriority);
+                ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
+                
+                int row = model.findProcess(current.getPID());
+                if (row >= 0)
+                    model.removeProcess(row);
+
+                ((ProcessTableModel)interfaz.doneTable.getModel()).addProcess(next);
                 next = null;
                 cpu.printActiveProcesses();
             }
@@ -91,6 +103,8 @@ public class Scheduler extends Thread {
 
                 current.setNeeds_ReSched(false);
                 cpu.setCurrentProcess(next);
+                Integer pid = new Integer(next.getPID());
+                interfaz.processCPULabel.setText(pid.toString());
                 return true;
             }
 
@@ -104,6 +118,8 @@ public class Scheduler extends Thread {
 
                 current.setNeeds_ReSched(false);
                 cpu.setCurrentProcess(next);
+                Integer pid = new Integer(next.getPID());
+                interfaz.processCPULabel.setText(pid.toString());
                 return true;
             }
 
@@ -147,6 +163,9 @@ public class Scheduler extends Thread {
 
         if (current != null){
             int timeUpdate = current.getTimeSlice();
+            
+            System.out.println("TIMESLICEEEEE : " + timeUpdate);
+            
             switch (current.getSchedulerPolitic()) {
                 case "NORMAL":
                     System.out.printf("\nPolitica NORMAL");
@@ -161,6 +180,8 @@ public class Scheduler extends Thread {
                         baseTime(current);
                         current.setNeeds_ReSched(true);
                         temp = cpu.removeActiveProcess(current.getDynamicPriority());
+                        //AQUI DEBO QUITAR DE INTERFAZ
+//                                removeColumn(row);
                         // Falta recalcular la prioridad dinamica
                         cpu.addExpiredProcess(temp, temp.getDynamicPriority());
                         //cpu.printExpiredProcesses();
@@ -171,8 +192,8 @@ public class Scheduler extends Thread {
                     System.out.printf("\nPolitica RR");
                     if (timeUpdate > 0) {
                         timeUpdate -= this.interruptInterval;
-                        System.out.printf("\nDecrementando timeslice de proceso %d",
-                                          current.getPID());
+                        System.out.println("Decrementando time slice de proceso " + 
+                                            current.getPID() + " timeslice: " + timeUpdate);
                         current.setTimeSlice(timeUpdate);
                         current.procesar(this.interruptInterval);
                     } else {
@@ -188,6 +209,17 @@ public class Scheduler extends Thread {
                     // Si se acaba su tiempo de CPU, cambia de proceso.
                     if (!current.getProcessType().equals("IDLE")) {
                         current.procesar(interruptInterval);
+//                        if (current.getTotalTime() <= 0) {
+//                           
+//                            ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
+//                            int row = model.findProcess(current.getPID());
+//
+//                            if (row >= 0)
+//                                model.removeProcess(row);
+//                            
+//                            cpu.removeActiveProcess(current.getDynamicPriority());
+////                            cpu.setCurrentProcess(null);
+//                        }
                         System.out.printf("\nPolitica FIFO");
                     }
             }
