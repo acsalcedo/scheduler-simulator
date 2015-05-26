@@ -1,4 +1,7 @@
 
+import javax.swing.JTable;
+
+
 public class Scheduler extends Thread {
 
     private boolean initialize = true;
@@ -133,19 +136,27 @@ public class Scheduler extends Thread {
 
                 current.setNeeds_ReSched(false);
                 cpu.setCurrentProcess(next);
+                Integer pid = new Integer(next.getPID());
+                interfaz.processCPULabel.setText(pid.toString());
                 return true;
             }
 
             // Intercambiar las listas Active y Expired
             if ((cpu.isEmptyActiveProcess()) && (!cpu.isEmptyExpiredProcess())){
-
+                System.out.println("EXCHANGE ACTIVE AND EXPIRED");
                 cpu.exchangeActiveExpiredProcesses();
+                ProcessTableModel model1 = (ProcessTableModel) interfaz.readyTable.getModel();
+                ProcessTableModel model2 = (ProcessTableModel) interfaz.expiredTable.getModel();
+                
+                interfaz.readyTable.setModel(model2);
+                interfaz.expiredTable.setModel(new ProcessTableModel());
                 inicializar(cpu);
                 return true;
             } else {
                 System.out.printf("\n\nColocar proceso Swapper ");
                 // Colocar el proceso swapper
                 cpu.setIdleOnCurrent();
+                interfaz.processCPULabel.setText("Idle");
                 return true;
             }
 
@@ -163,9 +174,7 @@ public class Scheduler extends Thread {
 
         if (current != null){
             int timeUpdate = current.getTimeSlice();
-            
-            System.out.println("TIMESLICEEEEE : " + timeUpdate);
-            
+                        
             switch (current.getSchedulerPolitic()) {
                 case "NORMAL":
                     System.out.printf("\nPolitica NORMAL");
@@ -180,12 +189,17 @@ public class Scheduler extends Thread {
                         baseTime(current);
                         current.setNeeds_ReSched(true);
                         temp = cpu.removeActiveProcess(current.getDynamicPriority());
-                        //AQUI DEBO QUITAR DE INTERFAZ
-//                                removeColumn(row);
+                        
+                        ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
+                
+                        int row = model.findProcess(temp.getPID());
+                        if (row >= 0)
+                            model.removeProcess(row);
+
+                        ((ProcessTableModel)interfaz.expiredTable.getModel()).addProcess(temp);
+                        
                         // Falta recalcular la prioridad dinamica
                         cpu.addExpiredProcess(temp, temp.getDynamicPriority());
-                        //cpu.printExpiredProcesses();
-                        //cpu.printActiveProcesses();
                     }
                     break;
                 case "RR":
@@ -203,23 +217,20 @@ public class Scheduler extends Thread {
                         // Los RT se consideran Active nunca van a Expired
                         temp = cpu.removeActiveProcess(current.getDynamicPriority());
                         cpu.addActiveProcess(temp, current.getDynamicPriority());
+                        
+                        ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
+                
+                        int row = model.findProcess(temp.getPID());
+                        if (row >= 0)
+                            model.removeProcess(row);
+
+                        model.addProcess(temp);
                     }
                     break;
                 case "FIFO":
                     // Si se acaba su tiempo de CPU, cambia de proceso.
                     if (!current.getProcessType().equals("IDLE")) {
                         current.procesar(interruptInterval);
-//                        if (current.getTotalTime() <= 0) {
-//                           
-//                            ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
-//                            int row = model.findProcess(current.getPID());
-//
-//                            if (row >= 0)
-//                                model.removeProcess(row);
-//                            
-//                            cpu.removeActiveProcess(current.getDynamicPriority());
-////                            cpu.setCurrentProcess(null);
-//                        }
                         System.out.printf("\nPolitica FIFO");
                     }
             }

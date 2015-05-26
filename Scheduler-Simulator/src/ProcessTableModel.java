@@ -204,5 +204,14 @@ import javax.swing.event.*;
             ((TableModelListener)listeners.get(i)).tableChanged(event);
          System.out.println("Paso");
     }
+    
+    public static void exchangeModels(ProcessTableModel model1, ProcessTableModel model2) {
+        LinkedList tempList = model1.processList;
+        LinkedList tempListeners = model1.listeners;
+        model1.processList = model2.processList;
+        model1.listeners = model2.listeners;
+        model2.processList = tempList;
+        model2.listeners = tempListeners;
+    }
 
 }

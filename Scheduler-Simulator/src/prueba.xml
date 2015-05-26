@@ -1,22 +1,43 @@
 
 <Processes>
 <Process>
-	<SchedulerPolitic>FIFO</SchedulerPolitic>
-	<TotalTime>100</TotalTime>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>10000</TotalTime>
 	<InitTime>0</InitTime>
 	<NeedsIO>true</NeedsIO>
 	<InitIOTime>20</InitIOTime>
 </Process>
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
-	<TotalTime>200</TotalTime>
+	<TotalTime>20000</TotalTime>
 	<InitTime>30</InitTime>
 	<NeedsIO>true</NeedsIO>
 	<InitIOTime>10</InitIOTime>
 </Process>
 <Process>
-	<SchedulerPolitic>NORMAL</SchedulerPolitic>
-	<TotalTime>100</TotalTime>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>1000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>2000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>3000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>40000</TotalTime>
 	<NeedsIO>false</NeedsIO>
 	<InitTime>5</InitTime>	
 	<InitIOTime>50</InitIOTime>

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,8 +14,7 @@ public class ProcessAppletTable extends JApplet
 {
     ReadXML xml = new ReadXML();
     /** Creates a new instance of PrincipalTabla */
-    public void init() 
-    {
+    public void init(String file, int interruptInterval) {
         // Crea el modelo
         ProcessTableModel model = new ProcessTableModel();
         ProcessTableModel modelExpired = new ProcessTableModel();
@@ -33,12 +33,12 @@ public class ProcessAppletTable extends JApplet
                                       modelIO, controlIO, modelDone, controlDone);
         
                  boolean execute = true;
-        //System.out.printf("\nIntervalo del timer: %s", argv[0]);
+        
         int i = 0;// interruptInterval = Integer.parseInt(argv[0]);
-        xml.getXML("src/prueba.xml");
+        xml.getXML(file);
 
         final RunQueue cpu1 = new RunQueue();
-        final Scheduler scheduler = new Scheduler(10000, 99, cpu1,interfaz);
+        final Scheduler scheduler = new Scheduler(interruptInterval,99,cpu1,interfaz);
 
         Iterator<Process> listIterator = xml.processList.iterator();
 
@@ -75,13 +75,17 @@ public class ProcessAppletTable extends JApplet
 
         TimerTask timerTask = new TimerTask()
         {
-             /**
+                Integer i = 0;
+
+            /**
               * Método al que Timer llamará cada segundo. Se encarga de avisar
               * a los observadores de este modelo.
               */
             public void run() {
-                System.out.printf("\n\nInvocado scheduler_tick");
+                interfaz.timerButton.setText(i.toString());
+                System.out.printf("\n\nInvocado scheduler_tick");            
                 scheduler.schedule_tick(cpu1);
+                i++;
             }
         };
 

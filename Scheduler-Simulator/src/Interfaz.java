@@ -46,12 +46,12 @@ public class Interfaz extends JFrame {
     ReadXML xml = new ReadXML();
     
     JLabel title, timerLabel, readyLabel, expiredLabel, IOLabel, doneLabel;
-    JLabel currentIOLabel, cpuLabel, processIOLabel, processCPULabel;
+    JLabel currentIOLabel, cpuLabel, processIOLabel, processCPULabel, timerButton;
     JPanel mainPanel, timerPanel, currentPanel, currentIOPanel, buttonPanel;
     JPanel readyPanel, expiredPanel, IOPanel, donePanel;
     JTable readyTable, expiredTable, IOTable, doneTable;
     JScrollPane readyScrollPane, expiredScrollPane, IOScrollPane, doneScrollPane;
-    JButton timerButton,addProcButton;
+//    JButton timerButton,addProcButton;
 	 
      /**
       * Constructor que recibe el modelo de la tabla y el control. Guarda ambos
@@ -117,8 +117,8 @@ public class Interfaz extends JFrame {
         timerPanel.setLayout(new FlowLayout());
         timerPanel.setPreferredSize(new Dimension(300,40));
         
-        timerButton = new JButton();
-        timerButton.setPreferredSize(new Dimension(20,20));
+        timerButton = new JLabel();
+//        timerButton.setPreferredSize(new Dimension(40,40));
 
         timerLabel = new JLabel("Timer: ");
         timerLabel.setBounds(10,20,300,30);
