@@ -28,19 +28,12 @@ public class TableControl{
      }
      
     /** 
-     * @brief Agrega un proceso al fina de la fila de la tabla
+     * @brief Agrega un proceso al final de la fila de la tabla
      */
      public void addRow(){
          Process process = new Process();
-         /**process.setPID(Integer.toString(count));
-                 
-            "PID " +Integer.toString(count),
-            "Priority "+ Integer.toString (count), 
-            "Type "+ Integer.toString (count), 
-            "Timer "+ Integer.toString (count), 
-            count);*/
          
-          model.addProcess(process);
+         model.addProcess(process);
          
          // Incrementa count para que el siguiente Process a agregar sea
          // distinto.
@@ -48,13 +41,7 @@ public class TableControl{
      }
      
      public void addRow(Process process){
-         /**process.setPID(Integer.toString(count));
-                 
-            "PID " +Integer.toString(count),
-            "Priority "+ Integer.toString (count), 
-            "Type "+ Integer.toString (count), 
-            "Timer "+ Integer.toString (count), 
-            count);*/
+         
          
           model.addProcess(process);
          

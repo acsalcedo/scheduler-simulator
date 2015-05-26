@@ -91,7 +91,7 @@ import javax.swing.event.*;
                 case 1:
                     return process.getDynamicPriority();
                 case 2:
-                    return process.getProcessType();
+                    return process.getSchedulerPolitic();
                 case 3:
                     return process.getTotalTime();
             }
@@ -202,7 +202,6 @@ import javax.swing.event.*;
         int i;
         for (i=0; i<listeners.size(); i++)
             ((TableModelListener)listeners.get(i)).tableChanged(event);
-         System.out.println("Paso");
     }
     
     public static void exchangeModels(ProcessTableModel model1, ProcessTableModel model2) {

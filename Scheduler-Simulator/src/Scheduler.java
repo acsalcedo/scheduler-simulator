@@ -1,4 +1,5 @@
 
+import java.util.LinkedList;
 import javax.swing.JTable;
 
 
@@ -8,6 +9,8 @@ public class Scheduler extends Thread {
     private final int priority_RT;
     private final int interruptInterval; // En milisegundos
     private RunQueue cpu;
+    private LinkedList<Process> IOQueue = new LinkedList<Process>();
+    InputOutput IO;
     Interfaz interfaz;
 
     Scheduler(int interruptInterval, int priority_RT, RunQueue cpu, Interfaz interfaz){
@@ -15,12 +18,22 @@ public class Scheduler extends Thread {
         this.priority_RT = priority_RT;
         this.cpu = cpu;
         this.interfaz = interfaz;
+        this.IO = new InputOutput(interruptInterval,interfaz);
         new Thread(this, "schedule");
     }
 
     public void run() {
+        IO.start();
         while (true)
             schedule(cpu);
+    }
+    
+    public Process getCurrentIOProcess() {
+        
+        if (IO.size() > 0) 
+            return IO.getCurrentProcess();
+        else
+            return null;
     }
 
     public void baseTime(Process process) {
@@ -88,11 +101,21 @@ public class Scheduler extends Thread {
                 next = cpu.removeActiveProcess(oldPriority);
                 ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
                 
-                int row = model.findProcess(current.getPID());
+                int row = model.findProcess(next.getPID());
+                
                 if (row >= 0)
                     model.removeProcess(row);
+                
+                if (next.isNeedsIO()) {
+                            
+                    System.out.printf("\nProceso en Entrada y Salida");
 
-                ((ProcessTableModel)interfaz.doneTable.getModel()).addProcess(next);
+                    IO.addProcess(next);
+                    ((ProcessTableModel)interfaz.IOTable.getModel()).addProcess(next);
+                        
+                } else
+                    ((ProcessTableModel)interfaz.doneTable.getModel()).addProcess(next);
+                
                 next = null;
                 cpu.printActiveProcesses();
             }
@@ -140,16 +163,24 @@ public class Scheduler extends Thread {
                 interfaz.processCPULabel.setText(pid.toString());
                 return true;
             }
-
+            
+           // cpu.printExpiredProcesses();
+            int nroExpiredProcesess = cpu.getExpiredProcesses().getNumActiveProcesses();
+            int nroActiveProcesess = cpu.getActiveProcesses().getNumActiveProcesses();
             // Intercambiar las listas Active y Expired
-            if ((cpu.isEmptyActiveProcess()) && (!cpu.isEmptyExpiredProcess())){
-                System.out.println("EXCHANGE ACTIVE AND EXPIRED");
-                cpu.exchangeActiveExpiredProcesses();
-                ProcessTableModel model1 = (ProcessTableModel) interfaz.readyTable.getModel();
-                ProcessTableModel model2 = (ProcessTableModel) interfaz.expiredTable.getModel();
+            System.out.println("nroActive: " +nroActiveProcesess+ "nroExpired: " +nroExpiredProcesess);
+            
+            if ((nroActiveProcesess==0) && (nroExpiredProcesess > 0)){
+                System.out.println("\nEXCHANGE ACTIVE AND EXPIRED");
                 
-                interfaz.readyTable.setModel(model2);
-                interfaz.expiredTable.setModel(new ProcessTableModel());
+                cpu.exchangeActiveExpiredProcesses();
+                
+                ProcessTableModel modelExpired = (ProcessTableModel) interfaz.expiredTable.getModel();
+                ProcessTableModel modelActive = (ProcessTableModel) interfaz.readyTable.getModel();
+                
+                interfaz.readyTable.setModel(modelExpired);
+                interfaz.expiredTable.setModel(modelActive);
+                
                 inicializar(cpu);
                 return true;
             } else {
@@ -159,10 +190,7 @@ public class Scheduler extends Thread {
                 interfaz.processCPULabel.setText("Idle");
                 return true;
             }
-
         }
-        // Falta caso FIFO
-        //Caso de reemplazo de proceso.
         return false;
     }
 
@@ -170,7 +198,6 @@ public class Scheduler extends Thread {
 
         Process current= cpu.getCurrentProcess();
         Process temp;
-        PriorityArray activeProceses;
 
         if (current != null){
             int timeUpdate = current.getTimeSlice();
@@ -178,13 +205,17 @@ public class Scheduler extends Thread {
             switch (current.getSchedulerPolitic()) {
                 case "NORMAL":
                     System.out.printf("\nPolitica NORMAL");
+                    
                     if (timeUpdate > 0) {
                         timeUpdate -= this.interruptInterval;
                         System.out.printf("\nDecrementando timeslice de proceso %d",
                                           current.getPID());
+                        
                         current.setTimeSlice(timeUpdate);
                         current.procesar(this.interruptInterval);
+                    
                     } else {
+                        
                         System.out.printf("\nProceso expirado: %d", current.getPID());
                         baseTime(current);
                         current.setNeeds_ReSched(true);
@@ -193,34 +224,39 @@ public class Scheduler extends Thread {
                         ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
                 
                         int row = model.findProcess(temp.getPID());
+                        
                         if (row >= 0)
                             model.removeProcess(row);
 
                         ((ProcessTableModel)interfaz.expiredTable.getModel()).addProcess(temp);
                         
-                        // Falta recalcular la prioridad dinamica
                         cpu.addExpiredProcess(temp, temp.getDynamicPriority());
                     }
                     break;
                 case "RR":
-                    System.out.printf("\nPolitica RR");
+                    System.out.println("\nPolitica RR");
+                    
                     if (timeUpdate > 0) {
                         timeUpdate -= this.interruptInterval;
                         System.out.println("Decrementando time slice de proceso " + 
-                                            current.getPID() + " timeslice: " + timeUpdate);
+                                            current.getPID());
                         current.setTimeSlice(timeUpdate);
                         current.procesar(this.interruptInterval);
+                        
                     } else {
                         System.out.printf("\nProceso sin timeslice: %d", current.getPID());
+                        
                         baseTime(current);
                         current.setNeeds_ReSched(true);
-                        // Los RT se consideran Active nunca van a Expired
+                        
+                        // Los RR se consideran Active nunca van a Expired
                         temp = cpu.removeActiveProcess(current.getDynamicPriority());
                         cpu.addActiveProcess(temp, current.getDynamicPriority());
                         
                         ProcessTableModel model = (ProcessTableModel) interfaz.readyTable.getModel();
                 
                         int row = model.findProcess(temp.getPID());
+                        
                         if (row >= 0)
                             model.removeProcess(row);
 

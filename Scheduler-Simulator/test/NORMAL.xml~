@@ -1,0 +1,24 @@
+<Processes>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>1000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+
+<Process>
+	<SchedulerPolitic>NORMAL</SchedulerPolitic>
+	<TotalTime>1000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>NORMAL</SchedulerPolitic>
+	<TotalTime>2000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+</Processes>

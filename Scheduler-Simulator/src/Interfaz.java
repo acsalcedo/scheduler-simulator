@@ -71,9 +71,9 @@ public class Interfaz extends JFrame {
          //GridBagConstraints constraints = new GridBagConstraints();
 	 //super (new GridBagLayout());
          readyTable = new JTable(model);
-         expiredTable = new JTable(new ProcessTableModel());
-         IOTable = new JTable(new ProcessTableModel());
-         doneTable = new JTable(new ProcessTableModel());
+         expiredTable = new JTable(modelExpired);
+         IOTable = new JTable(modelIO);
+         doneTable = new JTable(modelDone);
          this.control = control;
          buildingWindow();
      }

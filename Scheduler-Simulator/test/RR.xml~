@@ -1,0 +1,53 @@
+
+<Processes>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>10000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>20000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>30000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>1000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>0</InitTime>	
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>2000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>0</InitTime>	
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>3000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>RR</SchedulerPolitic>
+	<TotalTime>40000</TotalTime>
+	<NeedsIO>false</NeedsIO>
+	<InitTime>5</InitTime>	
+	<InitIOTime>50</InitIOTime>
+</Process>
+</Processes>

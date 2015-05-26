@@ -27,6 +27,7 @@ public class ReadXML extends DefaultHandler {
                 boolean initTimeTag = false;
                 boolean needsIOTag = false;
                 boolean initIOTag = false;
+                boolean ioTag = false;
 
                 @Override
                 public void startElement(String uri, String localName, String qName,
@@ -46,6 +47,8 @@ public class ReadXML extends DefaultHandler {
                         needsIOTag = true;
                     if (qName.equalsIgnoreCase("INITIOTIME"))
                         initIOTag = true;
+                    if (qName.equalsIgnoreCase("IOTIME"))
+                        ioTag = true;
                 }
 
                 @Override
@@ -60,6 +63,8 @@ public class ReadXML extends DefaultHandler {
                     if (needsIOTag)
                         currentProcess.setNeedsIO(Boolean.parseBoolean(new String(ch,start,length)));
                     if (initIOTag)
+                        currentProcess.setinitIOTime(Integer.parseInt(new String(ch,start,length)));
+                    if (ioTag)
                         currentProcess.setIOTime(Integer.parseInt(new String(ch,start,length)));
                 }
 
@@ -81,6 +86,8 @@ public class ReadXML extends DefaultHandler {
                         needsIOTag = false;
                     if (qName.equalsIgnoreCase("INITIOTIME"))
                         initIOTag = false;
+                    if (qName.equalsIgnoreCase("IOTIME"))
+                        ioTag = false;
                 }
 
             };

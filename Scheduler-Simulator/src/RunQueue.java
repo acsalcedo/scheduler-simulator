@@ -64,12 +64,12 @@ public class RunQueue {
         currentProcess = process;
     }
 
-    public void printActiveProcesses() {
+    synchronized public void printActiveProcesses() {
         System.out.printf("\nPROCESOS ACTIVOS");
         activeProcesses.printTable();
     }
 
-    public void printExpiredProcesses() {
+    synchronized public void printExpiredProcesses() {
         System.out.printf("\nPROCESOS EXPIRADOS");
         expiredProcesses.printTable();
     }

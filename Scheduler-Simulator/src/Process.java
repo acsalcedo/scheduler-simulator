@@ -17,11 +17,12 @@ public class Process {
     private Process proximo;
     private Process anterior;
     private int totalTime;  // Tiempo de CPU
-    private int runnningTime;
+    private int runningTime;
     private int timeInQueue;
     private int timeSlice;
     private String state; // TODO enum
     private boolean needsIO;
+    private int initIOTime;
     private int IOTime;
     private boolean needs_ReSched;
     private String processType; // TODO enum
@@ -60,6 +61,15 @@ public class Process {
     public int getDynamicPriority() {
         return dynamicPriority;
     }
+    
+    public int getInit_IOTime() {
+        return initIOTime;
+    }
+
+    public void setinitIOTime(int init) {
+        this.initIOTime = init;
+    }
+
 
     public void setSchedulerPolitic(String schedulerPolitic) {
         this.schedulerPolitic = schedulerPolitic;
@@ -92,7 +102,9 @@ public class Process {
 
     public void procesar(int decremento){
         totalTime -= decremento;
+        runningTime += decremento;
 
+//        if (needsIO && runningTime >= IOTime)
         if (totalTime <= 0){
             System.out.printf("\nProceso terminado. Cede el CPU");
             totalTime = 0;
@@ -102,17 +114,24 @@ public class Process {
             }*/
             state = "EXIT_DEAD";
         }
+        
+        
+    }
+    
+    public void runningIO(int decremento) {
+        IOTime -= decremento;
+        System.out.println("Decremento: " + decremento+ " IOTime: " + IOTime);
     }
 
     public int getTotalTime() {
         return totalTime;
     }
 
-    public void setRunnningTime(int runnningTime) {
-        this.runnningTime = runnningTime;
+    public void setRunningTime(int runnningTime) {
+        this.runningTime = runnningTime;
     }
-    public int getRunnningTime() {
-        return runnningTime;
+    public int getRunningTime() {
+        return runningTime;
     }
 
     public void setTimeInQueue(int timeInQueue) {
@@ -173,7 +192,8 @@ public class Process {
                            "\n   Total Time: " + totalTime +
                            "\n   Init Time: " + initTime +
                            "\n   Needs IO? " + needsIO +
-                           "\n   Init IO Time: " + IOTime);
+                           "\n   Init IO Time: " + initIOTime +
+			   "\n   IO Time:      " + IOTime);
     }
 
 

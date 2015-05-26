@@ -14,18 +14,18 @@ public class ProcessAppletTable extends JApplet
 {
     ReadXML xml = new ReadXML();
     /** Creates a new instance of PrincipalTabla */
-    public void init(String file, int interruptInterval) {
+    public void init(String file, final int interruptInterval) {
         // Crea el modelo
-        ProcessTableModel model = new ProcessTableModel();
+        ProcessTableModel model        = new ProcessTableModel();
         ProcessTableModel modelExpired = new ProcessTableModel();
-        ProcessTableModel modelIO = new ProcessTableModel();
-        ProcessTableModel modelDone = new ProcessTableModel();
+        ProcessTableModel modelIO      = new ProcessTableModel();
+        ProcessTableModel modelDone    = new ProcessTableModel();
         
         // Crea el control, pasndole el modelo
-        TableControl control = new TableControl(model);
+        TableControl control        = new TableControl(model);
         TableControl controlExpired = new TableControl(modelExpired);
-        TableControl controlIO = new TableControl(modelIO);
-        TableControl controlDone = new TableControl(modelDone);
+        TableControl controlIO      = new TableControl(modelIO);
+        TableControl controlDone    = new TableControl(modelDone);
         
         // Crea la vista, pasandole el control
         
@@ -39,7 +39,7 @@ public class ProcessAppletTable extends JApplet
 
         final RunQueue cpu1 = new RunQueue();
         final Scheduler scheduler = new Scheduler(interruptInterval,99,cpu1,interfaz);
-
+        final InputOutput IO = new InputOutput(interruptInterval+150,interfaz);
         Iterator<Process> listIterator = xml.processList.iterator();
 
         System.out.println("\nNumero de procesos en RunQueue: " +xml.processList.size());
@@ -66,16 +66,15 @@ public class ProcessAppletTable extends JApplet
             
         }
         
-         cpu1.printActiveProcesses();
+        cpu1.printActiveProcesses();
         System.out.printf("\nCOMIENZA EL SIMULADOR");
 
         scheduler.inicializar(cpu1);
         System.out.printf("\nPID del Proceso en CPU: %d \n", cpu1.getCurrentProcess().getPID());
 
 
-        TimerTask timerTask = new TimerTask()
-        {
-                Integer i = 0;
+        TimerTask timerTask = new TimerTask() {
+            Integer i = 0;
 
             /**
               * Método al que Timer llamará cada segundo. Se encarga de avisar
@@ -88,10 +87,18 @@ public class ProcessAppletTable extends JApplet
                 i++;
             }
         };
-
-
+        
+        /*Funcion que decrementa el timer para activad I/O */
+	TimerTask timerTask1 = new TimerTask() {
+		public void run() {
+                       IO.run();
+		}
+	};
+        
         java.util.Timer timer = new java.util.Timer();
+        java.util.Timer timer1 = new java.util.Timer();
         timer.scheduleAtFixedRate(timerTask, 0, scheduler.getInterruptInterval());
+        timer1.scheduleAtFixedRate(timerTask1, 0, interruptInterval+150);
         scheduler.start();
 //
         while (true) {}
