@@ -7,8 +7,6 @@ public class PriorityArray {
 
     private int numActiveProcesses = 0; /**< El numero de procesos activos.*/
     private int[] bitmap = new int[140]; /**< Bitmap para verificar rapidamente si una prioridad esta vacia.*/
-    // private LinkedList<Process> queue[] = new [139];
-    // No se puede combinar arreglos y listas. Por eso uso Tabla hash con Integer
     private ConcurrentHashMap<Integer,LinkedList<Process>> queue
                     = new ConcurrentHashMap<Integer,LinkedList<Process>>(140); /**< Arreglo de listas enlazadas. */
 
@@ -34,6 +32,10 @@ public class PriorityArray {
         numActiveProcesses--;
     }
 
+    /**
+     * @brief Devuelve el proceso con la prioridad mas alta.
+     * @return Proceso con la prioridad mas alta.
+     */
     public Process getHighestPriorityProcess() {
         Process temp;
         int i = 0;
@@ -47,6 +49,11 @@ public class PriorityArray {
         temp = queue.get(i).get(0);
         return temp;
     }
+    
+    /**
+     * Devuelve la prioridad mas alta.
+     * @return La prioridad mas alta
+     */
 
     public int getHighestPriorityBitmap() {
         int i = 0;
@@ -82,6 +89,10 @@ public class PriorityArray {
         return bitmap[priority] == 0;
     }
 
+    /**
+     * Devuelve si el priorityArray esta vacio.
+     * @return Booleano diciendo si el priorityArray esta vacio.
+     */
     public boolean isEmpty() {
         boolean cent = true;
         int i = 0;
@@ -103,7 +114,6 @@ public class PriorityArray {
             return null;
         else
             return queue.get(priority).get(0);
-
     }
 
     /**

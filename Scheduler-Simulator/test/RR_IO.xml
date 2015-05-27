@@ -2,25 +2,26 @@
 <Processes>
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
-	<TotalTime>10000</TotalTime>
+	<TotalTime>3000</TotalTime>
 	<InitTime>0</InitTime>
 	<NeedsIO>false</NeedsIO>
 	<InitIOTime>0</InitIOTime>
 </Process>
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
-	<TotalTime>20000</TotalTime>
+	<TotalTime>4000</TotalTime>
 	<InitTime>0</InitTime>
 	<NeedsIO>true</NeedsIO>
 	<InitIOTime>0</InitIOTime>
+        <IOTime>1000</IOTime>
 </Process>
 
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
-	<TotalTime>30000</TotalTime>
+	<TotalTime>2000</TotalTime>
 	<InitTime>0</InitTime>
 	<NeedsIO>true</NeedsIO>
-	<InitIOTime>0</InitIOTime>
+	<InitIOTime>100000</InitIOTime>
 </Process>
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
@@ -45,7 +46,7 @@
 </Process>
 <Process>
 	<SchedulerPolitic>RR</SchedulerPolitic>
-	<TotalTime>40000</TotalTime>
+	<TotalTime>1000</TotalTime>
 	<NeedsIO>false</NeedsIO>
 	<InitTime>5</InitTime>	
 	<InitIOTime>50</InitIOTime>

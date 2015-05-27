@@ -1,20 +1,15 @@
-import java.awt.Color;
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 import javax.swing.*;
 
-/**
- * Crea la vista, el modelo y el control del ejemplo de uso de la tabla.
- * Hereda de JFrame.
- */
 public class ProcessAppletTable extends JApplet
 {
     ReadXML xml = new ReadXML();
-    /** Creates a new instance of PrincipalTabla */
+
     public void init(String file, final int interruptInterval) {
+
         // Crea el modelo
         ProcessTableModel model        = new ProcessTableModel();
         ProcessTableModel modelExpired = new ProcessTableModel();
@@ -32,9 +27,9 @@ public class ProcessAppletTable extends JApplet
         final Interfaz interfaz = new Interfaz(model, control, modelExpired, controlExpired,
                                       modelIO, controlIO, modelDone, controlDone);
         
-                 boolean execute = true;
+        boolean execute = true;
         
-        int i = 0;// interruptInterval = Integer.parseInt(argv[0]);
+        int i = 0;
         xml.getXML(file);
 
         final RunQueue cpu1 = new RunQueue();
@@ -42,12 +37,11 @@ public class ProcessAppletTable extends JApplet
         final InputOutput IO = new InputOutput(interruptInterval+150,interfaz);
         Iterator<Process> listIterator = xml.processList.iterator();
 
-        System.out.println("\nNumero de procesos en RunQueue: " +xml.processList.size());
-
-      //  ReadXML xml = new ReadXML();
+        System.out.println("\nNumero de procesos totales: " +xml.processList.size());
         
         List<Process> processList = new ArrayList<>();
 
+        /* Carga inicial de todos los procesos definidos en el archivo XML. */
         while (listIterator.hasNext()) {
             Process elem;
             elem=listIterator.next();
@@ -67,11 +61,10 @@ public class ProcessAppletTable extends JApplet
         }
         
         cpu1.printActiveProcesses();
-        System.out.printf("\nCOMIENZA EL SIMULADOR");
+        System.out.println("\nCOMIENZA EL SIMULADOR");
 
         scheduler.inicializar(cpu1);
-        System.out.printf("\nPID del Proceso en CPU: %d \n", cpu1.getCurrentProcess().getPID());
-
+        System.out.println("\nPID del Proceso en CPU: "+ cpu1.getCurrentProcess().getPID());
 
         TimerTask timerTask = new TimerTask() {
             Integer i = 0;
@@ -88,11 +81,11 @@ public class ProcessAppletTable extends JApplet
             }
         };
         
-        /*Funcion que decrementa el timer para activad I/O */
+        /* Maneja el IO */
 	TimerTask timerTask1 = new TimerTask() {
-		public void run() {
-                       IO.run();
-		}
+            public void run() {
+                IO.run();
+            }
 	};
         
         java.util.Timer timer = new java.util.Timer();
@@ -100,13 +93,5 @@ public class ProcessAppletTable extends JApplet
         timer.scheduleAtFixedRate(timerTask, 0, scheduler.getInterruptInterval());
         timer1.scheduleAtFixedRate(timerTask1, 0, interruptInterval+150);
         scheduler.start();
-//
-        while (true) {}
-        
-        
-        
-       
     }
-    
-   
 }

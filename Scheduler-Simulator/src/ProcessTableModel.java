@@ -1,7 +1,3 @@
-/**
- *  Modelo de la tabla de procesos
- */
-
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,12 +11,6 @@ import javax.swing.event.*;
 
         /** Lista de suscriptores */
         private LinkedList listeners = new LinkedList();
-
-        /*public ProcessTableModel(List<Process> processes) {
-            this.processList = new ArrayList<>(processes);
-        }*/
-
-        //public ProcessTableModel() {}
 
         /**
          * @brief Obtener el numero de filas de la tabla
@@ -135,7 +125,6 @@ import javax.swing.event.*;
         notifiesSubscribers (evento);
     }
 
-
     /**
      * @brief:  Agrega   Un proceso al final de la fila.
      * @param    process  Un proceso
@@ -203,14 +192,4 @@ import javax.swing.event.*;
         for (i=0; i<listeners.size(); i++)
             ((TableModelListener)listeners.get(i)).tableChanged(event);
     }
-    
-    public static void exchangeModels(ProcessTableModel model1, ProcessTableModel model2) {
-        LinkedList tempList = model1.processList;
-        LinkedList tempListeners = model1.listeners;
-        model1.processList = model2.processList;
-        model1.listeners = model2.listeners;
-        model2.processList = tempList;
-        model2.listeners = tempListeners;
-    }
-
 }

@@ -1,10 +1,4 @@
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class TableControl{
 
     ReadXML xml = new ReadXML();
@@ -18,36 +12,27 @@ public class TableControl{
     /**
      * @brief Constructor. Se le pasa el modeo de la tabla 
      *        y anade los procesos del XML inicial. 
-     * @param model
+     * @param model Modelo de la tabla.
      */
      public TableControl(ProcessTableModel model){
-        
          this.model = model;
-        
-        
      }
      
     /** 
      * @brief Agrega un proceso al final de la fila de la tabla
      */
      public void addRow(){
-         Process process = new Process();
-         
+         Process process = new Process();         
          model.addProcess(process);
-         
-         // Incrementa count para que el siguiente Process a agregar sea
-         // distinto.
          count++;
      }
      
-     public void addRow(Process process){
-         
-         
-          model.addProcess(process);
-         
-         // Incrementa count para que el siguiente Process a agregar sea
-         // distinto.
-         count++;
+    /** 
+     * @brief Agrega un proceso al final de la fila de la tabla
+     */
+     public void addRow(Process process){ 
+        model.addProcess(process);
+        count++;
      }
      
     /** 

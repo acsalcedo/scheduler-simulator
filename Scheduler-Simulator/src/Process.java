@@ -1,41 +1,27 @@
 
 public class Process {
 
-    public enum StateProcess {
-        TASK_INTERRUPTIBLE, TASK_RUNNING, TASK_UNINTERRUPTIBLE, EXIT_DEAD
-    }
-
-    public enum SchedulerPolitic {
-        FIFO, RR, NORMAL
-    }
-
-    private int PID;
-    private int staticPriority;
-    private int dynamicPriority;
-    private String schedulerPolitic; // TODO enum
-    private int initTime;
-    private Process proximo;
-    private Process anterior;
-    private int totalTime;  // Tiempo de CPU
-    private int runningTime;
-    private int timeInQueue;
-    private int timeSlice;
-    private String state; // TODO enum
-    private boolean needsIO;
-    private int initIOTime;
-    private int IOTime;
-    private boolean needs_ReSched;
-    private String processType; // TODO enum
-
+    private int PID; /**< PID de proceso. */
+    private int staticPriority; /**< Prioridad estatica del proceso. */
+    private int dynamicPriority; /**< Prioridad dinamica del proceso */
+    private String schedulerPolitic; /**< Politica de planificacion del proceso. */
+    private int initTime; /**< Tiempo de inicio del proceso. */
+    private int totalTime;  /**< Tiempo total que debe estar en el CPU. */
+    private int runningTime; /**< Tiempo que lleva corriendo. */
+    private int timeInQueue; /**< Tiempo que lleva en la cola. */
+    private int timeSlice; /**< Time slice del proceso. */
+    private String state; /**< Estado del proceso. */
+    private boolean needsIO; /**< Almacena si el proceso necesita utilizar el IO o no. */
+    private int initIOTime; /**< Tiempo de inicio del IO. */
+    private int IOTime; /**< El tiempo total que debe estar en el IO. */
+    private boolean needs_ReSched; /**< Variable que determina si el proceso debe ser planificado nuevamente. */
+    private String processType; /**< Tipo del proceso. */
 
     public Process() {}
 
     public Process(String schedulerPolitic, String processType) {
         this.schedulerPolitic = schedulerPolitic;
         this.processType = processType;
-        this.anterior = null;
-        this.proximo = null;
-        // TODO set PID
     }
 
      public int getPID() {
@@ -99,28 +85,28 @@ public class Process {
         return needs_ReSched;
     }
 
-
+    /**
+     * @brief Metodo que simula la corrida del proceso.
+     * @param decremento Tiempo que se le resta al tiempo total que debe correr el proceso.
+     */
     public void procesar(int decremento){
         totalTime -= decremento;
         runningTime += decremento;
 
-//        if (needsIO && runningTime >= IOTime)
         if (totalTime <= 0){
             System.out.printf("\nProceso terminado. Cede el CPU");
             totalTime = 0;
             needs_ReSched = true;
-            /*if (needsIO) {
-
-            }*/
             state = "EXIT_DEAD";
         }
-        
-        
     }
     
+    /**
+     * @brief Simula la corrida en el IO.
+     * @param decremento Tiempo a restar del tiempo de IO.
+     */
     public void runningIO(int decremento) {
         IOTime -= decremento;
-        System.out.println("Decremento: " + decremento+ " IOTime: " + IOTime);
     }
 
     public int getTotalTime() {
@@ -182,6 +168,9 @@ public class Process {
         return processType;
     }
 
+    /**
+     * @brief Imprime la informacion del proceso dado.
+     */
     public void print() {
 
         System.out.println("\n   PID: " + PID +
@@ -193,10 +182,6 @@ public class Process {
                            "\n   Init Time: " + initTime +
                            "\n   Needs IO? " + needsIO +
                            "\n   Init IO Time: " + initIOTime +
-			   "\n   IO Time:      " + IOTime);
+			   "\n   IO Time: " + IOTime);
     }
-
-
-
-
 }

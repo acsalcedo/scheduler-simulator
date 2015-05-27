@@ -12,6 +12,11 @@ public class ReadXML extends DefaultHandler {
     public List<Process> processList = new ArrayList<Process>();
     private Process currentProcess = new Process();
 
+    /**
+     * Lee la informacion del procesos definidos en un archivo XML y 
+     * los crea y carga en una lista. 
+     * @param file Archivo a leer. 
+     */
     public void getXML(String file) {
 
         try {

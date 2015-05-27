@@ -3,16 +3,17 @@
 	<SchedulerPolitic>RR</SchedulerPolitic>
 	<TotalTime>1000</TotalTime>
 	<InitTime>0</InitTime>
-	<NeedsIO>false</NeedsIO>
+	<NeedsIO>true</NeedsIO>
 	<InitIOTime>0</InitIOTime>
+        <IOTIME>10000</IOTIME>
 </Process>
 
 <Process>
 	<SchedulerPolitic>NORMAL</SchedulerPolitic>
-	<TotalTime>1000</TotalTime>
+	<TotalTime>5000</TotalTime>
 	<InitTime>0</InitTime>
 	<NeedsIO>false</NeedsIO>
-	<InitIOTime>0</InitIOTime>
+	<InitIOTime>0</InitIOTime>      
 </Process>
 <Process>
 	<SchedulerPolitic>NORMAL</SchedulerPolitic>

@@ -1,18 +1,25 @@
 
 import java.util.LinkedList;
-import javax.swing.JTable;
 
+/**
+ * Clase del planificador de Linux 2.6. 
+ */
 
 public class Scheduler extends Thread {
 
-    private boolean initialize = true;
-    private final int priority_RT;
-    private final int interruptInterval; // En milisegundos
-    private RunQueue cpu;
-    private LinkedList<Process> IOQueue = new LinkedList<Process>();
-    InputOutput IO;
-    Interfaz interfaz;
+    private final int priority_RT; /**< Prioridad.*/
+    private final int interruptInterval; /**< Intervalo de la interrupción del timer. */
+    private RunQueue cpu; /**< Variable del cpu. */
+    InputOutput IO; /**< Cola de la Entrada/Salida. */
+    Interfaz interfaz; /**< Variable de la Interfaz del programa. */
 
+    /**
+     * @brief Constructor del planificador.
+     * @param interruptInterval Intervalo de la interrupción del timer.
+     * @param priority_RT
+     * @param cpu
+     * @param interfaz 
+     */
     Scheduler(int interruptInterval, int priority_RT, RunQueue cpu, Interfaz interfaz){
         this.interruptInterval = interruptInterval;
         this.priority_RT = priority_RT;
@@ -88,12 +95,15 @@ public class Scheduler extends Thread {
 
         // Caso (por razones de prueba ciclar los procesos)
         // Realizar bloqueo del runqueue cuando schedule sea implementado como hilo
-
+        
+        
+        
         current = cpu.getCurrentProcess();
         if (current.getNeeds_ReSched()) {
             System.out.printf("\nInvocado schedule");
             activeProcesses = cpu.getActiveProcesses();
             oldPriority = current.getDynamicPriority();
+            cpu.printExpiredProcesses();
 
             // Retirar un proceso del Runqueue
             if (current.getState().equals("EXIT_DEAD")){
@@ -170,7 +180,8 @@ public class Scheduler extends Thread {
             // Intercambiar las listas Active y Expired
             System.out.println("nroActive: " +nroActiveProcesess+ "nroExpired: " +nroExpiredProcesess);
             
-            if ((nroActiveProcesess==0) && (nroExpiredProcesess > 0)){
+            if (((nroActiveProcesess==0) && (nroExpiredProcesess > 0)) ||
+                (interfaz.expiredTable.getModel().getRowCount() > 0 && interfaz.readyTable.getModel().getRowCount() <= 0)){
                 System.out.println("\nEXCHANGE ACTIVE AND EXPIRED");
                 
                 cpu.exchangeActiveExpiredProcesses();

@@ -1,7 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class InputOutput extends Thread {
     
@@ -11,6 +9,11 @@ public class InputOutput extends Thread {
     private int interruptInterval = 0;
     private Interfaz interfaz;
     
+    /**
+     * @brief Constructor de la Entrada/Salida.
+     * @param interruptInterval Intervalo del timer de la Entrada/Salida
+     * @param interfaz  Variable donde se almacena la interfaz
+     */
     public InputOutput(int interruptInterval, Interfaz interfaz) {
         this.interruptInterval = interruptInterval;
         this.interfaz = interfaz;
@@ -19,6 +22,7 @@ public class InputOutput extends Thread {
     public void run() {
         
         while (true) {
+            
             if (currentProcess != null) {
 
                 System.out.println("\nTimer de IO");
@@ -26,6 +30,8 @@ public class InputOutput extends Thread {
                 interfaz.processIOLabel.setText(pid.toString());
                 currentProcess.runningIO(1);
 
+                /* Si el proceso actual en el IO termino, se elimina de las tabla del IO
+                   de la interfaz y se agrega a la tabla de los procesos terminados. */
                 if (currentProcess.getIOTime() <= 0) {
 
                     queue.remove(0);
@@ -47,11 +53,15 @@ public class InputOutput extends Thread {
                     else
                         currentProcess = null;
                 } 
-            } else {
+            } else
                  interfaz.processIOLabel.setText("None");
-            }
         }
     }
+    
+    /**
+     * @brief Se agrega el proceso dado a la cola de Entrada/Salida.
+     * @param process Proceso a agregar.
+     */
     public void addProcess(Process process) {
 
         queue.add(process);
@@ -62,10 +72,17 @@ public class InputOutput extends Thread {
         }
     }
     
+    /**
+     * @brief Devuelve el proceso actual en el IO.
+     * @return Proceso actual del IO.
+     */
     public Process getCurrentProcess() {
         return currentProcess;
     }
     
+    /**
+     * @brief Asigna el proximo proceso en la cola como el proceso actual.
+     */
     public void setNextProcess() {
         
         if (queue.isEmpty()) {
@@ -75,14 +92,19 @@ public class InputOutput extends Thread {
             currentProcess = queue.remove(0);
     }
     
+    /**
+     * @brief Devuelve el proximo proceso en la cola del IO.
+     * @return El proximo proceo en la cola del IO.
+     */
     public Process getNextProcess() {
         return queue.get(0);
     }
     
+    /**
+     * @brief Devuelve el tamano de la cola de la Entrada/Salida.
+     * @return El tamano de la cola del IO. 
+     */
     public int size() {
         return queue.size();
     }
-    
-    
-    
 }

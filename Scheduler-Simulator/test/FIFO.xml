@@ -1,0 +1,45 @@
+<Processes>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>1000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>5000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>2000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>3000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>true</NeedsIO>
+	<InitIOTime>1000</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>4000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+<Process>
+	<SchedulerPolitic>FIFO</SchedulerPolitic>
+	<TotalTime>6000</TotalTime>
+	<InitTime>0</InitTime>
+	<NeedsIO>false</NeedsIO>
+	<InitIOTime>0</InitIOTime>
+</Process>
+</Processes>

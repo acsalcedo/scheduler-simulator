@@ -1,11 +1,11 @@
 public class RunQueue {
 
-    private PriorityArray activeProcesses;
-    private PriorityArray expiredProcesses;
-    private PriorityArray[] queue = new PriorityArray[2];
-    private Process currentProcess;
-    private Process nextProcess;
-    private Process idleProcess;
+    private PriorityArray activeProcesses; /**< Apuntador a los prcesos activos. */
+    private PriorityArray expiredProcesses; /**< Apuntador a los procesos expirados. */
+    private PriorityArray[] queue = new PriorityArray[2]; /**< Arreglo de los priority arrays. */
+    private Process currentProcess; /**< Proceso actual. */
+    private Process nextProcess; /**< Proximo proceso. */
+    private Process idleProcess; /**< Proceso swapper. */
 
 
     public RunQueue() {
@@ -16,7 +16,10 @@ public class RunQueue {
         idleProcess = new Process("FIFO","IDLE");
     }
 
-    public void exchangeActiveExpiredProcesses() {
+    /**
+     * @brief Intercambia el apuntador de los procesos activos con el de los expirados. 
+     */
+    synchronized public void exchangeActiveExpiredProcesses() {
         PriorityArray exchange = activeProcesses;
         activeProcesses = expiredProcesses;
         expiredProcesses = exchange;
@@ -34,14 +37,12 @@ public class RunQueue {
         currentProcess = idleProcess;
     }
 
-
     synchronized public void addActiveProcess(Process process, int priority) {
         activeProcesses.addProcess(process, priority);
     }
 
     synchronized public Process removeActiveProcess(int priority) {
         return activeProcesses.removeProcess(priority);
-
     }
 
     synchronized public void addExpiredProcess(Process process, int priority) {
@@ -77,6 +78,4 @@ public class RunQueue {
     public Process getHighestPriorityActive() {
         return activeProcesses.getHighestPriorityProcess();
     }
-
-
 }
